@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fortevision"
+version = "0.2.0"
+description = "Local ResNet18 temporal binary video review MVP"
+requires-python = ">=3.11,<3.13"
+dynamic = ["dependencies"]
+
+[tool.setuptools.dynamic]
+dependencies = {file = ["requirements.txt"]}
+
+[tool.setuptools.packages.find]
+include = ["app*", "ml*", "scripts*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
