@@ -1,0 +1,88 @@
+"""UI navigation and states, without model training or external requests."""
+import base64
+import json
+from pathlib import Path
+from unittest.mock import Mock, patch
+
+import cv2
+import numpy as np
+import pytest
+from streamlit.testing.v1 import AppTest
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
+@pytest.fixture
+def ui():
+    response = Mock(status_code=200)
+    response.json.return_value = {'status': 'ok'}
+    with patch('requests.Session.get', return_value=response), patch('requests.Session.post') as post:
+        app = AppTest.from_file(str(ROOT/'app/frontend.py'), default_timeout=15).run()
+        assert not app.exception
+        yield app, response
+        post.assert_not_called()
+
+
+def test_research_navigation_search_and_filter(ui):
+    app, _ = ui
+    # Catalog is optional on installations without local research artifacts.
+    if not (ROOT/'research/rules.json').exists():
+        pytest.skip('Optional local research catalog is absent')
+    catalog = json.loads((ROOT/'research/rules.json').read_text(encoding='utf-8-sig'))
+    app.radio[0].set_value('Нормативные акты').run()
+    assert not app.exception
+    assert len(app.subheader) == len(catalog['rules'])
+    selected = catalog['rules'][0]
+    app.text_input[0].set_value(selected['rule_id']).run()
+    assert len(app.subheader) == 1
+    assert app.subheader[0].value == selected['event_name_ru']
+    app.text_input[0].set_value('zzzz-no-match').run()
+    assert not app.subheader
+    app.text_input[0].set_value('').run()
+    app.selectbox[0].set_value(selected['source_clause']).run()
+    assert len(app.subheader) == sum(r['source_clause'] == selected['source_clause'] for r in catalog['rules'])
+    assert not app.exception
+
+
+def test_research_missing_file_is_explained(ui):
+    app, _ = ui
+    original = Path.read_text
+    def read(path, *args, **kwargs):
+        if path == ROOT/'research/rules.json':
+            raise FileNotFoundError('Catalog missing')
+        return original(path, *args, **kwargs)
+    with patch.object(Path, 'read_text', read):
+        app.radio[0].set_value('Нормативные акты').run()
+    assert not app.exception
+    assert any('research/rules.json' in w.value for w in app.warning)
+
+
+def test_processing_and_failed_states(ui):
+    app, response = ui
+    app.session_state['job_id'] = 'test-job'
+    response.json.return_value = {'job_id': 'test-job', 'status': 'processing'}
+    app.run()
+    assert not app.exception
+    assert len(app.status) == 1
+    response.json.return_value = {'job_id': 'test-job', 'status': 'failed', 'error': 'Модель недоступна'}
+    app.run()
+    assert not app.exception
+    assert len(app.error) == 1
+
+
+@pytest.mark.parametrize('positive', [True, False])
+def test_completed_result_rendering(ui, positive):
+    app, _ = ui
+    ok, encoded = cv2.imencode('.jpg', np.zeros((32, 32, 3), np.uint8))
+    assert ok
+    event = dict(type='Признаки возможного нарушения', timecode_sec=12.5,
+                 description='Требуется ручная проверка.',
+                 evidence_frames=[dict(timestamp_sec=12.5, image_base64=base64.b64encode(encoded).decode())])
+    app.session_state['job_id'] = 'test-job'
+    app.session_state['result'] = dict(job_id='test-job', status='done',
+        verdict='violation' if positive else 'no_violation', violations=[event] if positive else [], elapsed_seconds=1.5)
+    app.run()
+    assert not app.exception
+    assert len(app.get('imgs')) == int(positive)
+    assert len(app.metric) == 3
+    assert len(app.get('download_button')) == 1

@@ -15,5 +15,8 @@ dependencies = {file = ["requirements.txt"]}
 [tool.setuptools.packages.find]
 include = ["app*", "ml*", "scripts*"]
 
+[tool.setuptools.package-data]
+app = ["*.css"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
