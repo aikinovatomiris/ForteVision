@@ -46,7 +46,7 @@ def load_research():
 def source_link(url):
     if isinstance(url, str):
         parsed = urlparse(url)
-        if parsed.scheme == 'https' and parsed.hostname in ('adilet.zan.kz', 'old.adilet.zan.kz'):
+        if parsed.scheme == 'https' and parsed.hostname in ('adilet.zan.kz', 'old.adilet.zan.kz', 'nationalbank.kz', 'www.nationalbank.kz'):
             st.link_button('Открыть источник ↗', url, use_container_width=True)
 
 
@@ -64,7 +64,7 @@ with st.sidebar:
     markup('<div class="brand"><span class="brand-icon">f<span>v</span></span><div>Forte<span>Vision</span><small>VIDEO INTELLIGENCE</small></div></div>')
     markup('<div class="nav-label">РАБОЧЕЕ ПРОСТРАНСТВО</div>')
     page = st.radio('Раздел', ['Анализ видео', 'Нормативные акты'], label_visibility='collapsed')
-    markup('<div class="sidebar-note"><span class="privacy-dot"></span> Локальная обработка<br><small>Видео и кадры остаются на этом компьютере. Без распознавания лиц.</small></div>')
+    markup('<div class="sidebar-note"><span class="privacy-dot"></span> Локальная обработка<br><small>Видео обрабатывается внутри сервиса, без облачных AI API и распознавания лиц.</small></div>')
     st.divider()
     st.caption('FORTEVISION / DATATHON MVP')
     st.caption('Экспериментальная модель. Решение принимает специалист.')
@@ -75,11 +75,11 @@ markup(f'<div class="topline"><span>РАБОЧЕЕ ПРОСТРАНСТВО <b>/
 @st.fragment(run_every=10)
 def service_status():
     try:
-        response = session.get(url + '/health', timeout=2, allow_redirects=False)
+        response = session.get(url + '/ready', timeout=5, allow_redirects=False)
         response.raise_for_status()
-        st.caption('● Сервис доступен · обработка на этом компьютере')
+        st.caption('● Сервис готов · локальная модель проверена')
     except requests.RequestException:
-        st.warning('API недоступен. Запустите локальный сервер и повторите запрос.')
+        st.warning('Сервис не готов: проверьте запуск API, ключ и файлы модели.')
 
 
 def render_result(result):
@@ -90,7 +90,7 @@ def render_result(result):
         return
     events = result['violations']
     flagged = result['verdict'] == 'violation'
-    title = 'Есть фрагменты для проверки' if flagged else 'Подозрительные фрагменты не найдены'
+    title = 'Обнаружены признаки возможных нарушений' if flagged else 'Нарушение не обнаружено'
     subtitle = ('Модель выделила визуальные признаки. Просмотрите кадры и контекст операции.' if flagged
                 else 'Оценки окон ниже порога модели. Это не гарантирует отсутствия нарушения.')
     markup(f'<div class="result-banner {"flagged" if flagged else "clear"}"><span class="eyebrow">АНАЛИЗ ЗАВЕРШЁН</span><h3>{title}</h3><p>{subtitle}</p></div>')
@@ -105,6 +105,11 @@ def render_result(result):
             markup(f'<div class="event-heading"><span class="event-number">{index:02d}</span><span class="time-pill">{timecode(event["timecode_sec"])}</span></div>')
             st.subheader(event['type'])
             st.write(event['description'])
+            for reference in event.get('rule_references') or []:
+                st.markdown('**Нормативное основание для ручной проверки**')
+                st.write(reference['source_title'])
+                st.caption(f'Пункт / раздел: {reference["section"]} · Проверено: {reference["verified_at"]}')
+                source_link(reference['source_url'])
             for column, frame in zip(st.columns(len(event['evidence_frames'])), event['evidence_frames']):
                 column.image(base64.b64decode(frame['image_base64'], validate=True),
                              caption=f'Кадр · {timecode(frame["timestamp_sec"])}', use_container_width=True)
@@ -113,7 +118,19 @@ def render_result(result):
     with st.expander('Технические сведения'):
         st.write(f'ID задания: {result["job_id"]}')
         st.write(f'Ответ модели: {result["verdict"]}')
-        st.caption('Время обработки не включает загрузку файла и ожидание в очереди.')
+        st.caption('Общее время включает загрузку в API, очередь и анализ; загрузка из браузера в Streamlit учитывается отдельно.')
+        if 'queue_seconds' in result:
+            st.write(f'В очереди: {result["queue_seconds"]:.1f} с')
+    if st.button('Удалить результат из сервиса', key='delete_result', use_container_width=True):
+        try:
+            response = session.delete(url + f'/api/v1/jobs/{result["job_id"]}', headers=headers, timeout=10, allow_redirects=False)
+            if response.status_code not in (204, 404):
+                raise RuntimeError('Не удалось удалить результат')
+            for key in ('result', 'job_id', 'analyzed_filename'):
+                st.session_state.pop(key, None)
+            st.rerun()
+        except (requests.RequestException, RuntimeError) as exc:
+            st.error(str(exc))
 
 
 @st.fragment(run_every=2)

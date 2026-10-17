@@ -1,0 +1,22 @@
+{
+    email {$ACME_EMAIL}
+    admin off
+}
+
+{$FORTEVISION_DOMAIN} {
+    request_body {
+        max_size 270MB
+    }
+    header {
+        X-Content-Type-Options nosniff
+        Referrer-Policy no-referrer
+        X-Frame-Options SAMEORIGIN
+    }
+    @api path /api/* /health /ready /openapi.json
+    handle @api {
+        reverse_proxy 127.0.0.1:8000
+    }
+    handle {
+        reverse_proxy 127.0.0.1:8501
+    }
+}

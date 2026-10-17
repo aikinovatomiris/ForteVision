@@ -1,0 +1,33 @@
+services:
+  app:
+    build: .
+    image: fortevision:local
+    init: true
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      FORTEVISION_MODEL: /app/models/classifier.joblib
+      FORTEVISION_WEIGHTS: /app/models/resnet18-f37072fd.pth
+      FORTEVISION_API_URL: http://127.0.0.1:8000
+      FORTEVISION_DEVICE: cpu
+      FORTEVISION_UPLOAD_DIR: /var/tmp/fortevision/uploads
+      FORTEVISION_JOB_DB: /var/lib/fortevision/jobs.sqlite3
+    ports:
+      - "127.0.0.1:8000:8000"
+      - "127.0.0.1:8501:8501"
+    volumes:
+      - ./models:/app/models:ro
+      - ./configs:/app/configs:ro
+      - ./research:/app/research:ro
+      - job_state:/var/lib/fortevision
+    tmpfs:
+      - /var/tmp/fortevision:uid=10001,gid=10001,mode=0700,size=1073741824
+    stop_grace_period: 310s
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/ready',timeout=5); urllib.request.urlopen('http://127.0.0.1:8501/_stcore/health',timeout=5)"]
+      interval: 20s
+      timeout: 12s
+      start_period: 40s
+      retries: 3
+volumes:
+  job_state:

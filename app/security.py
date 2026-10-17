@@ -1,5 +1,6 @@
 import asyncio
 import hmac
+import time
 
 from fastapi import HTTPException
 from starlette.datastructures import Headers
@@ -16,6 +17,9 @@ class RequestGuard:
         if scope['type'] != 'http':
             return await self.app(scope, receive, send)
         headers = Headers(scope=scope)
+        is_upload = scope['path'] == '/api/v1/analyze' and scope['method'] == 'POST'
+        if is_upload:
+            scope['fortevision_received_at'] = time.monotonic()
         if scope['path'].startswith('/api/'):
             if not self.settings.api_key or self.settings.api_key.startswith('replace-with-'):
                 return await JSONResponse({'detail': 'Настройте FORTEVISION_API_KEY в .env'}, status_code=503)(scope, receive, send)
@@ -32,12 +36,20 @@ class RequestGuard:
         received = 0
         async def limited_receive():
             nonlocal received
-            message = await receive()
+            if is_upload:
+                remaining = self.settings.timeout_seconds-(time.monotonic()-scope['fortevision_received_at'])
+                if remaining <= 0:
+                    raise HTTPException(408, 'Срок загрузки истёк')
+                try:
+                    message = await asyncio.wait_for(receive(), timeout=remaining)
+                except asyncio.TimeoutError as exc:
+                    raise HTTPException(408, 'Срок загрузки истёк') from exc
+            else:
+                message = await receive()
             received += len(message.get('body', b''))
             if received > limit:
                 raise HTTPException(413, 'Файл превышает лимит размера')
             return message
-        is_upload = scope['path'] == '/api/v1/analyze' and scope['method'] == 'POST'
         if is_upload:
             if self.upload_slots.locked():
                 return await JSONResponse({'detail': 'Слишком много загрузок'}, status_code=429)(scope, receive, send)

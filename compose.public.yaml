@@ -1,0 +1,23 @@
+# Additional public ports; base bindings remain loopback-only.
+services:
+  app:
+    ports:
+      - "80:80"
+      - "443:443"
+  proxy:
+    image: caddy:2.10.2
+    restart: unless-stopped
+    network_mode: service:app
+    depends_on:
+      app:
+        condition: service_healthy
+    environment:
+      FORTEVISION_DOMAIN: ${FORTEVISION_DOMAIN:?Set a real domain in .env}
+      ACME_EMAIL: ${ACME_EMAIL:?Set an ACME contact email in .env}
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+volumes:
+  caddy_data:
+  caddy_config:

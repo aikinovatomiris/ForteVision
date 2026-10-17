@@ -16,3 +16,6 @@ research/annotations.csv
 *.mov
 *.MOV
 wheelhouse/
+*.sqlite3
+*.sqlite3-*
+runtime/

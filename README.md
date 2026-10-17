@@ -111,7 +111,15 @@ Weak negatives допускаются только когда **все окно*
 
 ## API и Streamlit
 
-Первый терминал:
+Рекомендуемый единый запуск (API + UI, без обучения, с блокировкой внешних Python-соединений):
+
+```powershell
+python -m scripts.serve
+```
+
+Развёртывание и HTTPS: [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md). Пакет жюри: [docs/JURY.md](docs/JURY.md). Контракт для ML-разработчика: [docs/ML_INTERFACE.md](docs/ML_INTERFACE.md). Хранение и очистка: [docs/DATA_RETENTION.md](docs/DATA_RETENTION.md). Оставшиеся внешние условия: [docs/NON_ML_STATUS.md](docs/NON_ML_STATUS.md).
+
+Для отдельной отладки без egress guard — первый терминал:
 
 ```powershell
 python -m uvicorn app.api:app --host 127.0.0.1 --port 8000 --workers 1 --no-access-log
@@ -123,7 +131,7 @@ python -m uvicorn app.api:app --host 127.0.0.1 --port 8000 --workers 1 --no-acce
 python -m streamlit run app/frontend.py
 ```
 
-Открыть http://127.0.0.1:8501. Streamlit загружает MOV, показывает `processing`, verdict, события, таймкоды, JPEG и ошибки. Он обращается только к loopback API, не использует proxy environment и не следует redirect. Телеметрия Streamlit отключена в `.streamlit/config.toml`; браузер не подключает сторонние изображения для evidence. Проверенных нормативных источников пока нет, поэтому интерфейс не показывает выдуманных ссылок.
+Открыть http://127.0.0.1:8501. Streamlit загружает MOV, показывает `processing`, два вердикта из ТЗ, события, таймкоды, JPEG и ошибки. Он обращается только к loopback API, не использует proxy environment и не следует redirect. Телеметрия Streamlit отключена. Отдельный справочник отображает research; ссылки в конкретном результате появляются только при утверждённом сопоставлении типа с нормой и текущим хешем модели. Для бинарного baseline таких сопоставлений пока нет.
 
 ```powershell
 curl.exe http://127.0.0.1:8000/health
@@ -147,13 +155,13 @@ POST возвращает HTTP 202 и только `{"job_id":"..."}`. GET тр�
 }
 ```
 
-Пример показывает структуру, а не результат вашего видео. В реальном ответе base64 содержит JPEG из загруженного видео. `no_violation` имеет пустой `violations`; отсутствующая модель дает `failed` с `error`, а не фиктивный отрицательный результат. Дополнительные необязательные поля `elapsed_seconds` и `within_five_minutes` измеряют обработку. Swagger CDN отключен; схема доступна в `/openapi.json`.
+Пример показывает структуру, а не результат вашего видео. В реальном ответе base64 содержит JPEG из загруженного видео; API валидирует изображение. `no_violation` имеет пустой `violations`; отсутствующая модель дает `failed`, а не фиктивный отрицательный результат. Необязательные поля `elapsed_seconds` и `within_five_minutes` учитывают загрузку API, очередь и обработку; `queue_seconds` и `processing_seconds` показывают составляющие. Для будущих подтверждённых типов поддерживаются optional `event_type`/`rule_references`; обязательный контракт жюри сохранён. Swagger CDN отключен; схема доступна в `/openapi.json`. `/ready` проверяет ключ и целостность моделей; `/health` — только доступность процесса.
 
 ## Ограничения сервиса и безопасность данных
 
-- Один процесс Uvicorn и один worker. Очередь по умолчанию 3 задачи, максимум 20 записей jobs, TTL завершенных результатов 1 час. `processing` означает ожидание **или** выполнение. При перегрузке 429. Перезапуск теряет in-memory jobs/results; это не production task queue. После истечения TTL GET возвращает 404. Uploads хранятся в системном temp-каталоге `fortevision-uploads` (Windows: `%TEMP%\fortevision-uploads`), чтобы не попадать в рабочую папку OneDrive. Путь можно задать `FORTEVISION_UPLOAD_DIR`. Uploads удаляются после успеха/ошибки; после аварийного завершения процесса остатки этого каталога следует удалить локально.
+- Один процесс Uvicorn и один worker. Очередь по умолчанию 3 задачи, максимум 20 записей jobs, TTL результатов до 1 часа. `processing` означает ожидание **или** выполнение. При перегрузке 429. SQLite сохраняет результаты между перезапусками; прерванные jobs получают failed. При заполнении удаляется старый завершённый результат, а не блокируются все новые загрузки. После TTL/вытеснения/удаления GET возвращает 404. Uploads — в системном TEMP `fortevision-uploads`; SQLite — рядом в `fortevision-uploads-state`. Пути: FORTEVISION_UPLOAD_DIR/FORTEVISION_JOB_DB. Файлы удаляются после обработки; остатки после аварии очищает `python -m scripts.cleanup_runtime --apply` при остановленном API. Подробности в DATA_RETENTION.md.
 - MOV: проверка расширения и сигнатуры контейнера при загрузке; полная проверка декодирования в worker. Ограничение 256 MB, UUID имена, исходное имя не используется как путь. Некорректный формат — 415/422, размер — 413, ключ — 401, ключ не настроен — 503. Защита тела запроса также работает без Content-Length.
-- Worker запускает отдельный процесс и прерывает его через 295 секунд; извлечение проверяет бюджет между кадрами/батчами. Job получает `failed` при timeout, а не неполный «успешный» результат. Измерение не включает ожидание в очереди и upload. Быстрее 5 минут зависит от оборудования, длины, FPS и кодека и требует фактического benchmark. CLI проверяет deadline, но зависший native decoder жестко прерывается только через API subprocess timeout.
+- Общий серверный бюджет 295 секунд начинается при получении POST и включает загрузку API и очередь. Worker получает оставшееся время; watchdog публикует failed по deadline, поздний результат не заменяет ошибку. Timeout не считается успешной обработкой. Полный клиентский SLA проверяется `scripts.check_api`; сеть/прокси и первая загрузка браузер → Streamlit не измеряются таймером backend. Успех каждого видео менее чем за 5 минут зависит от оборудования и ML. CLI проверяет deadline, зависший native decoder прерывается через API subprocess timeout.
 - Ограничения MVP: длительность до часа, максимум 100 событий, JSON результата до 16 MB. Evidence — 1–3 кадра на событие, уменьшенные до 960 px по длинной стороне. Результаты с JPEG занимают память; это одна из причин ограниченного store.
 - Времена кадров берутся из OpenCV `CAP_PROP_POS_MSEC`. Отрицательные preroll-кадры до нулевой отметки пропускаются без сдвига временной шкалы. Неисправная/не возрастающая шкала дает ошибку; не подменяется расчетом `frame/FPS`. Evidence извлекается последовательным чтением: seek работает не для всех MOV. Поддержка VFR и кодеков зависит от backend. Метаданные длительности оценены OpenCV. Peak — timestamp реального sampled кадра в окне с максимальной вероятностью; это не доказательство точного момента нарушения.
 - Вероятности LogisticRegression не калиброваны для банка. Смена камер, фона и длительности видео может изменить score; максимум по окнам смещается на длинных видео. Нет распознавания лиц, идентификации сотрудников или классификации типов нарушений. Бинарная метка не является юридическим выводом.
@@ -170,14 +178,14 @@ python -m scripts.prepare_weights
 
 Перенесите wheelhouse подходящих Python/OS, веса и обученный classifier с metadata. Установка без сети: `python -m pip install --no-index --find-links wheelhouse -r requirements-dev.txt`. Inference не скачивает модели и не вызывает облачные сервисы. Отключение сети допустимо после установки. Joblib/torch/sklearn версии должны совпадать с обучением; перенос CPU/CUDA проверять отдельно.
 
-Dockerfile использует Python 3.11; модель и данные не включены в image. Пример локального API:
+Dockerfile использует Python 3.11; модель и данные не включены в image. Единый UI/API:
 
 ```powershell
-docker build -t fortevision .
-docker run --rm -p 127.0.0.1:8000:8000 --env-file .env -v "${PWD}/models:/app/models:ro" fortevision
+docker compose config --quiet
+docker compose up -d --build
 ```
 
-Docker build требует сети, runtime — нет. В `.env` для контейнера используйте пути `models/classifier.joblib` и `models/resnet18-f37072fd.pth`, не Windows absolute paths. Сам Dockerfile не является свидетельством пройденного Docker-теста.
+Docker build требует сети; подготовленный runtime рассчитан на offline. Compose задаёт контейнерные пути моделей. Публичный HTTPS — дополнительный compose.public.yaml, см. DEPLOYMENT.md. Сам Dockerfile не является свидетельством пройденного Docker-теста.
 
 ## Тесты
 
@@ -187,7 +195,7 @@ python -m unittest discover -s tests -v
 python -m compileall -q app ml scripts tests
 ```
 
-Тесты совместимы с pytest и unittest. При отсутствии библиотек отдельные группы пропускаются с явной причиной; пропуск не равен успешной проверке. Проверяются labels, X/Х/NFKC, timestamps, video split, duplicate hashes, OpenCV decoding, pooling, evidence JPEG, отсутствие модели/весов, authentication, upload limits, bounded queue, processing/done/failed и JSON schema. В API используются mock модели; веса не скачиваются. Синтетические видео/модели создаются только во временных каталогах unit tests и не участвуют в итоговом обучении.
+Полный набор запускается через pytest; unittest запускает только совместимую часть и пропускает pytest-функции. При отсутствии библиотек отдельные группы пропускаются с явной причиной; пропуск не равен успешной проверке. Проверяются labels, X/Х/NFKC, timestamps, video split, duplicate hashes, OpenCV decoding, pooling, evidence JPEG, отсутствие модели/весов, authentication, upload limits, bounded queue, processing/done/failed и JSON schema. В API используются mock модели; веса не скачиваются. Синтетические видео/модели создаются только во временных каталогах unit tests и не участвуют в итоговом обучении.
 
 Результаты фактически выполненных проверок фиксируются в [VALIDATION.md](VALIDATION.md). Метрики ResNet и обещания скорости не публикуются до реального прогона.
 

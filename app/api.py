@@ -3,13 +3,14 @@ import uuid
 from contextlib import asynccontextmanager
 from pathlib import Path
 
-from fastapi import FastAPI, File, HTTPException, Security, UploadFile
+from fastapi import FastAPI, File, HTTPException, Request, Security, UploadFile
 from fastapi.security import APIKeyHeader
 
 from .config import Settings
-from .jobs import JobStore, QueueFullError
+from .jobs import JobStore, QueueFullError, JobExpiredError
 from .schemas import JobAccepted, JobResponse
 from .security import RequestGuard
+from .readiness import model_ready
 
 
 def create_app(settings=None, runner=None):
@@ -36,7 +37,7 @@ def create_app(settings=None, runner=None):
                 'authentication_configured': bool(settings.api_key and not settings.api_key.startswith('replace-with-'))}
 
     @app.post('/api/v1/analyze', status_code=202, response_model=JobAccepted, dependencies=[Security(key_scheme)])
-    async def submit(file: UploadFile = File(...)):
+    async def submit(request: Request, file: UploadFile = File(...)):
         if Path(file.filename or '').suffix.casefold() != '.mov':
             await file.close()
             raise HTTPException(415, 'Поддерживается только .mov')
@@ -55,9 +56,11 @@ def create_app(settings=None, runner=None):
             if size < 12 or header[4:8] not in (b'ftyp', b'moov', b'mdat', b'wide', b'free', b'skip'):
                 raise HTTPException(422, 'Файл не похож на MOV/QuickTime контейнер')
             try:
-                job_id = store.submit(path)
+                job_id = store.submit(path, request.scope.get('fortevision_received_at'))
             except QueueFullError as exc:
-                raise HTTPException(429, str(exc)) from exc
+                raise HTTPException(429, str(exc), headers={'Retry-After': '5'}) from exc
+            except JobExpiredError as exc:
+                raise HTTPException(408, str(exc)) from exc
             submitted = True
             return {'job_id': job_id}
         finally:
@@ -71,6 +74,21 @@ def create_app(settings=None, runner=None):
         if job is None:
             raise HTTPException(404, 'Job не найден или истек TTL')
         return job
+
+    @app.get('/ready')
+    def ready():
+        from fastapi.responses import JSONResponse
+        ready = model_ready(settings)
+        return JSONResponse({'status': 'ready' if ready else 'not_ready'}, status_code=200 if ready else 503)
+
+    @app.delete('/api/v1/jobs/{job_id}', status_code=204, dependencies=[Security(key_scheme)])
+    def delete_job(job_id: uuid.UUID):
+        try:
+            deleted = store.delete(str(job_id))
+        except ValueError as exc:
+            raise HTTPException(409, str(exc)) from exc
+        if not deleted:
+            raise HTTPException(404, 'Job не найден')
 
     return app
 
