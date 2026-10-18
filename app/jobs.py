@@ -1,4 +1,5 @@
 """One worker, persisted results and an end-to-end deadline; no training."""
+from dataclasses import replace
 import json
 import queue
 import sqlite3
@@ -31,7 +32,7 @@ def subprocess_runner(path: Path, settings, timeout_seconds=None):
     try:
         process = subprocess.run(
             [sys.executable, '-m', 'ml.predict', '--video', str(path), '--model', str(settings.model),
-             '--weights', str(settings.weights), '--device', settings.device,
+             '--backend', settings.backend, '--weights', str(settings.weights), '--device', settings.device,
              '--budget', str(max(.01, remaining-2)), '--output', str(output)],
             cwd=ROOT, capture_output=True, text=True, timeout=remaining,
         )
@@ -57,6 +58,7 @@ class JobStore:
         self.settings, self.runner = settings, runner
         self.queue = queue.Queue(maxsize=settings.queue_size)
         self.jobs, self.completed, self.pending = {}, {}, {}
+        self.backends = {}
         self.lock = threading.RLock()
         self.stopping = threading.Event()
         self.thread = threading.Thread(target=self._work, name='fortevision-worker', daemon=True)
@@ -106,7 +108,9 @@ class JobStore:
             self.completed[key] = time.time()
             self._persist(key)
 
-    def submit(self, path, received_at=None):
+    def submit(self, path, received_at=None, backend=None):
+        if backend is not None and backend not in ('classifier','local_vlm'):
+            raise ValueError('Unknown backend')
         received_at = time.monotonic() if received_at is None else received_at
         with self.lock:
             self._prune()
@@ -122,6 +126,7 @@ class JobStore:
             key = str(uuid.uuid4())
             self.jobs[key] = dict(job_id=key, status='processing')
             self.pending[key] = (path, received_at, time.monotonic())
+            self.backends[key] = backend or self.settings.backend
             self._persist(key)
             self.queue.put_nowait(key)
             return key
@@ -163,7 +168,7 @@ class JobStore:
                 remaining = received+self.settings.timeout_seconds-started
                 if not active or remaining <= 0:
                     raise JobExpiredError('Срок задания истёк в очереди')
-                result = self.runner(path) if self.runner else subprocess_runner(path, self.settings, remaining)
+                result = self.runner(path) if self.runner else subprocess_runner(path, replace(self.settings, backend=self.backends[key]), remaining)
                 result = attach_verified_sources(result, self.settings)
                 elapsed = time.monotonic()-received
                 if elapsed >= self.settings.timeout_seconds:
@@ -182,6 +187,7 @@ class JobStore:
             with self.lock:
                 self._finish(key, completed)
                 self.pending.pop(key, None)
+                self.backends.pop(key, None)
             self.queue.task_done()
 
     def stop(self):
@@ -195,6 +201,7 @@ class JobStore:
                 except queue.Empty:
                     break
                 path, _, _ = self.pending.pop(key)
+                self.backends.pop(key, None)
                 path.unlink(missing_ok=True)
                 self.queue.task_done()
                 self._finish(key, dict(job_id=key, status='failed', error='Сервис остановлен до начала анализа'))

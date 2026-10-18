@@ -39,7 +39,7 @@ class ApiTests(unittest.TestCase):
         with self.Client(self.create_app(self.settings, lambda path: {})) as client:
             self.assertEqual(client.get('/health').status_code,200)
             self.assertEqual(self.upload(client, headers={}).status_code,401)
-            self.assertEqual(self.upload(client, name='x.mp4').status_code,415)
+            self.assertEqual(self.upload(client, name='x.exe').status_code,415)
             self.assertEqual(self.upload(client, content=b'broken').status_code,422)
             self.assertEqual(self.upload(client, content=MOV_HEADER+b'x'*(1024*1024)).status_code,413)
             self.assertEqual(list(self.settings.upload_dir.iterdir()),[])
@@ -108,3 +108,16 @@ class ApiTests(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError,'процесс остановлен'):
                 subprocess_runner(path,self.settings)
         self.assertFalse(partial.exists())
+
+    def test_mp4_m4v_mov_upload_and_preserved_suffix(self):
+        seen=[]
+        def runner(path):
+            seen.append(path.suffix)
+            return dict(verdict='no_violation',violations=[])
+        with self.Client(self.create_app(self.settings,runner)) as client:
+            for extension in ('mov','mp4','m4v','M4V'):
+                result=self.upload(client,name='clip.'+extension)
+                self.assertEqual(result.status_code,202)
+                self.assertEqual(self.wait_job(client,result.json()['job_id'])['status'],'done')
+                self.assertEqual(seen[-1],'.'+extension.lower())
+            self.assertEqual(self.upload(client,name='bad.m4v',content=b'not video').status_code,422)

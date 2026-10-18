@@ -20,6 +20,9 @@ def _check(model, metadata, weights, signatures, device):
 def model_ready(settings):
     if not settings.api_key or settings.api_key.startswith('replace-with-'):
         return False
+    if settings.backend == 'local_vlm':
+        from ml.local_vlm import ready
+        return ready()
     paths = (settings.model, settings.model.with_suffix('.json'), settings.weights)
     try:
         signatures = tuple((p.stat().st_size, p.stat().st_mtime_ns) for p in paths)

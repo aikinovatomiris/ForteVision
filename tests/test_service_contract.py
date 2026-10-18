@@ -160,3 +160,24 @@ def test_sources_require_matching_model_validation_and_specific_type(settings, t
     result['violations'][0]['type'] = 'Fixture'
     settings.model.write_bytes(b'different-model')
     assert 'rule_references' not in attach_verified_sources(result, settings)['violations'][0]
+
+
+def test_backend_is_bound_to_each_queued_job(settings, monkeypatch):
+    calls=[]
+    def runner(path, config, remaining):
+        calls.append(config.backend)
+        return dict(verdict='no_violation',violations=[],analysis_complete=False,
+            workflow_checks=[dict(rule_id='document',state='unknown')])
+    monkeypatch.setattr('app.jobs.subprocess_runner',runner)
+    store=JobStore(settings)
+    store.start()
+    try:
+        key=store.submit(video(settings,'sequence.mov'),backend='local_vlm')
+        result=wait_terminal(store,key)
+        assert result['analysis_complete'] is False
+        assert result['workflow_checks'][0]['state']=='unknown'
+        key=store.submit(video(settings,'legacy.mov'),backend='classifier')
+        assert wait_terminal(store,key)['status']=='done'
+        assert calls==['local_vlm','classifier']
+    finally:
+        store.stop()

@@ -1,1 +1,89 @@
-{"schema_version": 1, "rules": []}
+{
+  "schema_version": 1,
+  "rules": [
+    {
+      "source_title": "Постановление Правления НБРК от 29.11.2019 № 231 — Правила осуществления кассовых операций",
+      "source_url": "https://old.adilet.zan.kz/rus/docs/V1900019680",
+      "verified_by": "official_source_snapshot_review",
+      "verified_at": "2026-10-17",
+      "reference_role": "normative_context",
+      "source_audit": "legal_source_audit.json",
+      "source_audit_sha256": "b3df5bb7fbd0b3ac197b6d8087017edd5fce6a543ba8e26379fa204e69343adb",
+      "event_type": "document_handover_not_observed",
+      "section": "п. 19, подп. 1)",
+      "applicability": "Применимо к приёму наличных. Допускаются цифровые документы: отсутствие передачи бумажного документа не доказывает отсутствие идентификации. Лица и персональные данные сервис не проверяет."
+    },
+    {
+      "source_title": "Постановление Правления НБРК от 29.11.2019 № 231 — Правила осуществления кассовых операций",
+      "source_url": "https://old.adilet.zan.kz/rus/docs/V1900019680",
+      "verified_by": "official_source_snapshot_review",
+      "verified_at": "2026-10-17",
+      "reference_role": "normative_context",
+      "source_audit": "legal_source_audit.json",
+      "source_audit_sha256": "b3df5bb7fbd0b3ac197b6d8087017edd5fce6a543ba8e26379fa204e69343adb",
+      "event_type": "prior_deposit_outside_storage",
+      "section": "п. 20",
+      "applicability": "Нужно подтвердить, что на столе ранее принятые деньги, а не деньги текущей операции или сдача."
+    },
+    {
+      "source_title": "Постановление Правления НБРК от 29.11.2019 № 231 — Правила осуществления кассовых операций",
+      "source_url": "https://old.adilet.zan.kz/rus/docs/V1900019680",
+      "verified_by": "official_source_snapshot_review",
+      "verified_at": "2026-10-17",
+      "reference_role": "normative_context",
+      "source_audit": "legal_source_audit.json",
+      "source_audit_sha256": "b3df5bb7fbd0b3ac197b6d8087017edd5fce6a543ba8e26379fa204e69343adb",
+      "event_type": "cash_left_unattended",
+      "section": "п. 20",
+      "applicability": "Контекст хранения ранее принятых денег; принадлежность денег и завершение операции требуют проверки."
+    },
+    {
+      "source_title": "Постановление Правления НБРК от 29.11.2019 № 231 — Правила осуществления кассовых операций",
+      "source_url": "https://old.adilet.zan.kz/rus/docs/V1900019680",
+      "verified_by": "official_source_snapshot_review",
+      "verified_at": "2026-10-17",
+      "reference_role": "normative_context",
+      "source_audit": "legal_source_audit.json",
+      "source_audit_sha256": "b3df5bb7fbd0b3ac197b6d8087017edd5fce6a543ba8e26379fa204e69343adb",
+      "event_type": "storage_left_open",
+      "section": "п. 20",
+      "applicability": "Пункт описывает хранение ранее принятых денег в устройствах, закрывающихся на ключ. Видимая открытая дверца — основание для проверки; наличие денег и применимость нормы нужно подтвердить."
+    },
+    {
+      "source_title": "Постановление Правления НБРК от 29.11.2019 № 231 — Правила осуществления кассовых операций",
+      "source_url": "https://old.adilet.zan.kz/rus/docs/V1900019680",
+      "verified_by": "official_source_snapshot_review",
+      "verified_at": "2026-10-17",
+      "reference_role": "normative_context",
+      "source_audit": "legal_source_audit.json",
+      "source_audit_sha256": "b3df5bb7fbd0b3ac197b6d8087017edd5fce6a543ba8e26379fa204e69343adb",
+      "event_type": "storage_left_unlocked",
+      "section": "п. 20",
+      "applicability": "Закрытая дверца не подтверждает запирание. Невидимый поворот ключа не доказывает, что замок открыт; механический статус требует проверки."
+    },
+    {
+      "source_title": "Постановление Правления НБРК от 29.11.2019 № 231 — Правила осуществления кассовых операций",
+      "source_url": "https://old.adilet.zan.kz/rus/docs/V1900019680",
+      "verified_by": "official_source_snapshot_review",
+      "verified_at": "2026-10-17",
+      "reference_role": "normative_context",
+      "source_audit": "legal_source_audit.json",
+      "source_audit_sha256": "b3df5bb7fbd0b3ac197b6d8087017edd5fce6a543ba8e26379fa204e69343adb",
+      "event_type": "recount_not_observed",
+      "section": "п. 19, подп. 2); п. 20",
+      "applicability": "Применимо к приёму наличных; ручной полистный пересчёт также допустим. Отсутствие счётной машины само по себе не является нарушением."
+    },
+    {
+      "source_title": "Постановление Правления НБРК от 29.11.2019 № 231 — Правила осуществления кассовых операций",
+      "source_url": "https://old.adilet.zan.kz/rus/docs/V1900019680",
+      "verified_by": "official_source_snapshot_review",
+      "verified_at": "2026-10-17",
+      "reference_role": "normative_context",
+      "source_audit": "legal_source_audit.json",
+      "source_audit_sha256": "b3df5bb7fbd0b3ac197b6d8087017edd5fce6a543ba8e26379fa204e69343adb",
+      "event_type": "cashier_left_active_service",
+      "section": "п. 22",
+      "applicability": "Нужно подтвердить, что обслуживание клиента ещё не завершено; перемещение внутри рабочего места не является уходом."
+    }
+  ]
+}

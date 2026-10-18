@@ -19,3 +19,17 @@ wheelhouse/
 *.sqlite3
 *.sqlite3-*
 runtime/
+
+.venv312/
+
+# Local installers, media, runtime and private exports
+*.whl
+*.gguf
+*.pth
+*.joblib
+*.mp4
+*.m4v
+*.avi
+*.log
+.env.*
+!.env.example

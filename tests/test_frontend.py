@@ -86,3 +86,53 @@ def test_completed_result_rendering(ui, positive):
     assert len(app.get('imgs')) == int(positive)
     assert len(app.metric) == 3
     assert len(app.get('download_button')) == 1
+
+def test_event_playback_uses_matching_uploaded_video(ui):
+    app,_=ui
+    ok,encoded=cv2.imencode('.jpg',np.zeros((32,32,3),np.uint8))
+    event=dict(type='Тип события не определён',description='Не выбран тип.',timecode_sec=12.,context_start_sec=5.,context_end_sec=20.,evidence_frames=[dict(timestamp_sec=12.,image_base64=base64.b64encode(encoded).decode())])
+    app.session_state['job_id']='context-job'
+    app.session_state['result']=dict(job_id='context-job',status='done',verdict='violation',violations=[event])
+    app.session_state['analyzed_video_bytes']=b'video-fixture'
+    app.session_state['analyzed_video_mime']='video/mp4'
+    app.session_state['analyzed_video_job_id']='context-job'
+    with patch('streamlit.video') as player:
+        app.run()
+        assert not app.exception
+        player.assert_called_once_with(b'video-fixture',format='video/mp4',start_time=5.,end_time=20.)
+    app.session_state['analyzed_video_job_id']='different-job'
+    with patch('streamlit.video') as player:
+        app.run()
+        assert not app.exception
+        player.assert_not_called()
+    assert any('Исходное видео недоступно' in item.value for item in app.info)
+
+
+def test_workflow_unknown_does_not_render_clean_bill(ui):
+    app,_=ui
+    app.session_state['job_id']='workflow-test'
+    app.session_state['result']=dict(job_id='workflow-test',status='done',verdict='no_violation',violations=[],analysis_complete=False,
+        workflow_checks=[dict(title='Передача документа',state='unknown',timestamps=[],note='Не видно')],
+        observations=[dict(timestamp_sec=1.5,detail='Деньги на столе')])
+    app.run()
+    assert not app.exception
+    assert any('Есть непроверенные шаги операции' in x.value for x in app.markdown)
+    assert any('Не удалось проверить' in x.value for x in app.markdown)
+
+
+def test_review_result_keeps_candidate_and_never_shows_clean_banner(ui):
+    app, _ = ui
+    ok, encoded = cv2.imencode('.jpg', np.zeros((32, 32, 3), np.uint8))
+    assert ok
+    event = dict(type='Документ требует проверки', timecode_sec=12., description='Гипотеза.',
+                 review_reason='Тип не подтверждён на отложенных видео.', review_priority='high',
+                 evidence_frames=[dict(timestamp_sec=12., image_base64=base64.b64encode(encoded).decode())])
+    app.session_state['job_id'] = 'review-job'
+    app.session_state['result'] = dict(job_id='review-job', status='done', verdict='no_violation', violations=[],
+        review_candidates=[event], review_required=True, assessment_status='needs_review', analysis_complete=False)
+    app.run()
+    assert not app.exception
+    assert any('Гипотеза: Документ требует проверки' in h.value for h in app.subheader)
+    rendered=' '.join(item.value for item in app.markdown)
+    assert 'Нужна проверка выделенных моментов' in rendered
+    assert 'Нарушение не обнаружено' not in rendered

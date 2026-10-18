@@ -1,5 +1,7 @@
 import asyncio
 import uuid
+from typing import Literal
+from dataclasses import replace
 from contextlib import asynccontextmanager
 from pathlib import Path
 
@@ -37,11 +39,12 @@ def create_app(settings=None, runner=None):
                 'authentication_configured': bool(settings.api_key and not settings.api_key.startswith('replace-with-'))}
 
     @app.post('/api/v1/analyze', status_code=202, response_model=JobAccepted, dependencies=[Security(key_scheme)])
-    async def submit(request: Request, file: UploadFile = File(...)):
-        if Path(file.filename or '').suffix.casefold() != '.mov':
+    async def submit(request: Request, file: UploadFile = File(...), backend: Literal['classifier', 'local_vlm'] | None = None):
+        suffix = Path(file.filename or '').suffix.casefold()
+        if suffix not in {'.mov', '.mp4', '.m4v'}:
             await file.close()
-            raise HTTPException(415, 'Поддерживается только .mov')
-        path = settings.upload_dir / f'{uuid.uuid4().hex}.mov'
+            raise HTTPException(415, 'Поддерживаются MOV, MP4 и M4V')
+        path = settings.upload_dir / f'{uuid.uuid4().hex}{suffix}'
         submitted = False
         try:
             size, header = 0, b''
@@ -54,9 +57,9 @@ def create_app(settings=None, runner=None):
                         header = chunk[:32]
                     await asyncio.to_thread(destination.write, chunk)
             if size < 12 or header[4:8] not in (b'ftyp', b'moov', b'mdat', b'wide', b'free', b'skip'):
-                raise HTTPException(422, 'Файл не похож на MOV/QuickTime контейнер')
+                raise HTTPException(422, 'Файл не похож на MOV/MP4/M4V контейнер')
             try:
-                job_id = store.submit(path, request.scope.get('fortevision_received_at'))
+                job_id = store.submit(path, request.scope.get('fortevision_received_at'), backend=backend)
             except QueueFullError as exc:
                 raise HTTPException(429, str(exc), headers={'Retry-After': '5'}) from exc
             except JobExpiredError as exc:
@@ -76,9 +79,9 @@ def create_app(settings=None, runner=None):
         return job
 
     @app.get('/ready')
-    def ready():
+    def ready(backend: Literal['classifier', 'local_vlm'] | None = None):
         from fastapi.responses import JSONResponse
-        ready = model_ready(settings)
+        ready = model_ready(replace(settings, backend=backend) if backend else settings)
         return JSONResponse({'status': 'ready' if ready else 'not_ready'}, status_code=200 if ready else 503)
 
     @app.delete('/api/v1/jobs/{job_id}', status_code=204, dependencies=[Security(key_scheme)])

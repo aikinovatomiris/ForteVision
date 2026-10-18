@@ -88,28 +88,64 @@ def render_result(result):
         st.write(result['error'])
         st.caption('Результат не сформирован. Проверьте файл и доступность локальной модели.')
         return
-    events = result['violations']
+    review = result.get('review_candidates', [])
+    events = result['violations'] + review
     flagged = result['verdict'] == 'violation'
     title = 'Обнаружены признаки возможных нарушений' if flagged else 'Нарушение не обнаружено'
+    if result.get('analysis_complete') is False and not flagged:
+        title = 'Есть непроверенные шаги операции'
+    if result.get('review_required'):
+        title = 'Нужна проверка выделенных моментов'
     subtitle = ('Модель выделила визуальные признаки. Просмотрите кадры и контекст операции.' if flagged
-                else 'Оценки окон ниже порога модели. Это не гарантирует отсутствия нарушения.')
-    markup(f'<div class="result-banner {"flagged" if flagged else "clear"}"><span class="eyebrow">АНАЛИЗ ЗАВЕРШЁН</span><h3>{title}</h3><p>{subtitle}</p></div>')
+                else 'Подтверждающей последовательности не найдено. Непроверенные шаги могут остаться; это не гарантирует отсутствия нарушения.')
+    markup(f'<div class="result-banner {"flagged" if (flagged or result.get("review_required")) else "clear"}"><span class="eyebrow">АНАЛИЗ ЗАВЕРШЁН</span><h3>{title}</h3><p>{subtitle}</p></div>')
     a, b, c = st.columns(3)
-    a.metric('Фрагменты', len(events))
+    a.metric('Моменты для просмотра', len(events))
     elapsed = result.get('elapsed_seconds')
     b.metric('Время обработки', f'{elapsed:.1f} с' if isinstance(elapsed, (int, float)) else '—')
     c.metric('Кадры для проверки', sum(len(e['evidence_frames']) for e in events))
-    st.caption('Текущая модель определяет общие признаки; тип события и применимость нормы проверяет человек.')
+    st.caption('Тип и описание — гипотеза модели. Сопоставьте их с последовательностью кадров; применимость нормы проверяет человек.')
+    if result.get('workflow_checks'):
+        st.subheader('Последовательность операции')
+        for check in result['workflow_checks']:
+            state = 'Замечено' if check['state'] == 'observed' else 'Не удалось проверить'
+            times = ', '.join(timecode(t) for t in check.get('timestamps', []))
+            st.write(f"{check['title']} — {state}" + (f" · {times}" if times else ''))
+            st.caption(check['note'])
+        with st.expander('Наблюдения модели по времени'):
+            for observation in result.get('observations', []):
+                st.write(f"{timecode(observation['timestamp_sec'])} · {observation['detail']}")
+        for limitation in result.get('analysis_limitations', []):
+            st.caption(limitation)
     for index, event in enumerate(events, 1):
         with st.container(border=True):
             markup(f'<div class="event-heading"><span class="event-number">{index:02d}</span><span class="time-pill">{timecode(event["timecode_sec"])}</span></div>')
-            st.subheader(event['type'])
+            if event.get('review_reason'):
+                st.caption('ПРИОРИТЕТНАЯ ПРОВЕРКА' if event.get('review_priority') == 'high' else 'ТРЕБУЕТ ПРОСМОТРА')
+                st.caption(event['review_reason'])
+            st.subheader(('Гипотеза: ' if event.get('review_reason') else '') + event['type'])
+            st.markdown('**Что могло произойти**')
             st.write(event['description'])
+            st.caption('Кадры ниже помогают проверить это предположение; отдельный кадр может не показывать всё действие.')
+            start = event.get('context_start_sec')
+            start = max(0., event['timecode_sec'] - 5.) if start is None else start
+            end = event.get('context_end_sec')
+            end = event['timecode_sec'] + 5. if end is None else end
+            with st.expander(f'Посмотреть действие в контексте · {timecode(start)}–{timecode(end)}'):
+                if st.session_state.get('analyzed_video_bytes') and st.session_state.get('analyzed_video_job_id') == result['job_id']:
+                    st.video(st.session_state['analyzed_video_bytes'], format=st.session_state.get('analyzed_video_mime', 'video/mp4'), start_time=start, end_time=end)
+                    st.caption('Исходная запись: до и после выделенного события. Если видео не воспроизводится, проверьте этот интервал в проигрывателе.')
+                else:
+                    st.info('Исходное видео недоступно в этой сессии. Загрузите его и запустите анализ повторно для просмотра контекста.')
+                if not event.get('event_type'):
+                    st.write('Почему нет конкретного действия: модель не выбрала достаточно уверенно ни один изученный тип. Этот сигнал сам по себе не подтверждает нарушение.')
             for reference in event.get('rule_references') or []:
                 st.markdown('**Нормативное основание для ручной проверки**')
                 st.write(reference['source_title'])
                 st.caption(f'Пункт / раздел: {reference["section"]} · Проверено: {reference["verified_at"]}')
                 source_link(reference['source_url'])
+                if reference.get('applicability'):
+                    st.caption(reference['applicability'])
             for column, frame in zip(st.columns(len(event['evidence_frames'])), event['evidence_frames']):
                 column.image(base64.b64decode(frame['image_base64'], validate=True),
                              caption=f'Кадр · {timecode(frame["timestamp_sec"])}', use_container_width=True)
@@ -117,7 +153,9 @@ def render_result(result):
                        file_name='fortevision-result.json', mime='application/json', use_container_width=True)
     with st.expander('Технические сведения'):
         st.write(f'ID задания: {result["job_id"]}')
-        st.write(f'Ответ модели: {result["verdict"]}')
+        st.write(f'Статус проверки: {result.get("assessment_status", result["verdict"])}')
+        if result.get('review_required'):
+            st.caption('Поле verdict сохраняет старый бинарный формат API. no_violation при needs_review не означает чистую запись.')
         st.caption('Общее время включает загрузку в API, очередь и анализ; загрузка из браузера в Streamlit учитывается отдельно.')
         if 'queue_seconds' in result:
             st.write(f'В очереди: {result["queue_seconds"]:.1f} с')
@@ -126,7 +164,7 @@ def render_result(result):
             response = session.delete(url + f'/api/v1/jobs/{result["job_id"]}', headers=headers, timeout=10, allow_redirects=False)
             if response.status_code not in (204, 404):
                 raise RuntimeError('Не удалось удалить результат')
-            for key in ('result', 'job_id', 'analyzed_filename'):
+            for key in ('result', 'job_id', 'analyzed_filename', 'analyzed_video_bytes', 'analyzed_video_mime', 'analyzed_video_job_id'):
                 st.session_state.pop(key, None)
             st.rerun()
         except (requests.RequestException, RuntimeError) as exc:
@@ -149,7 +187,7 @@ def poll():
         if result['status'] == 'processing':
             st.status('Анализируем запись…', state='running')
             st.write('Видео в очереди или обрабатывается. Результат появится автоматически.')
-            st.caption('Извлечение кадров → оценка временных окон → подготовка кадров для проверки. Модель не обучается.')
+            st.caption('Кадры по времени → наблюдаемые действия → проверка последовательности → фрагменты для проверки. Модель не обучается.')
             return
         st.session_state['result'] = result
         render_result(result)
@@ -161,36 +199,44 @@ def poll():
 
 
 def analysis_page():
+    st.warning('Экспериментальный анализ. Проверьте действия и таймкоды: модель может пропустить короткий жест, перепутать предметы или не увидеть сейф. Качество на новых ракурсах ещё не подтверждено.')
     markup('<div class="hero"><div class="hero-copy"><span class="eyebrow">FORTEVISION · ВИДЕОАНАЛИТИКА</span><h1>Внимание к каждой<br><em>операции.</em></h1><p>От видеозаписи — к фрагментам, которые требуют внимания специалиста.</p><div class="hero-tags"><span>Локальный AI</span><span>Точные таймкоды</span><span>Кадры из видео</span></div></div><div class="hero-art" aria-hidden="true"><div class="art-orbit"></div><div class="art-frame"><div class="art-bars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="art-line"></div><span>FRAME / INSIGHT</span></div><div class="art-chip">◈ <b>ForteVision</b><small>В фокусе — детали</small></div></div></div>')
     service_status()
     left, right = st.columns([0.85, 1.4], gap='large')
     with left:
         markup('<div class="section-heading"><span>01</span><h2>Видеозапись</h2></div>')
         with st.container(border=True):
+            mode = st.selectbox('Режим анализа', ['Текущая модель', 'Последовательность действий — эксперимент'])
+            backend = 'local_vlm' if mode.startswith('Последовательность') else 'classifier'
+            if backend == 'local_vlm':
+                st.info('Новый локальный анализ шагов. Пока пропускает нарушения на контрольных видео; используйте для проверки наблюдений, не для оценки качества.')
             st.markdown('**Добавьте запись операции**')
-            st.caption('MOV · до 256 МБ · один файл за анализ')
-            video = st.file_uploader('Выберите видео .mov', type=['mov'], label_visibility='collapsed')
+            st.caption('MOV / MP4 / M4V · до 256 МБ · один файл за анализ')
+            video = st.file_uploader('Выберите видео MOV, MP4 или M4V', type=['mov', 'mp4', 'm4v'], label_visibility='collapsed')
             if video:
                 st.caption(f'{video.name} · {video.size / 1024**2:.1f} МБ')
                 with st.expander('Предпросмотр записи'):
-                    st.video(video, format='video/quicktime')
-                    st.caption('Если браузер не поддерживает кодек MOV, анализ всё равно доступен.')
+                    st.video(video, format='video/quicktime' if Path(video.name).suffix.lower()=='.mov' else 'video/mp4')
+                    st.caption('Если браузер не воспроизводит кодек, анализ может быть доступен; для просмотра используйте MP4 с H.264.')
             if st.button('Начать анализ →', type='primary', disabled=video is None, use_container_width=True):
                 try:
                     with st.spinner('Передаём видео локальному сервису…'):
-                        response = session.post(url + '/api/v1/analyze',
-                            files={'file': (video.name, video.getvalue(), 'video/quicktime')},
+                        response = session.post(url + '/api/v1/analyze', params={'backend': backend},
+                            files={'file': (video.name, video.getvalue(), 'video/quicktime' if Path(video.name).suffix.lower()=='.mov' else 'video/mp4')},
                             headers=headers, timeout=60, allow_redirects=False)
                     if response.status_code != 202:
                         raise RuntimeError(response.json().get('detail', response.text))
                     st.session_state['job_id'] = response.json()['job_id']
                     st.session_state['analyzed_filename'] = video.name
+                    st.session_state['analyzed_video_bytes'] = video.getvalue()
+                    st.session_state['analyzed_video_mime'] = 'video/quicktime' if Path(video.name).suffix.lower()=='.mov' else 'video/mp4'
+                    st.session_state['analyzed_video_job_id'] = st.session_state['job_id']
                     st.session_state.pop('result', None)
                 except (requests.RequestException, ValueError, RuntimeError, KeyError) as exc:
                     st.error(f'Не удалось отправить видео: {exc}')
         markup('<div class="note-card"><span>БЕЗ ИЗМЕНЕНИЯ МОДЕЛИ</span><h4>Загружайте. Проверяйте. Повторяйте.</h4><p>Анализ использует готовую модель. Ваши загрузки не запускают обучение и не меняют её веса.</p></div>')
         with st.expander('Что важно знать о результате'):
-            st.write('Это экспериментальная бинарная модель. В проведённой проверке все четыре нормальных test-видео получили ложную тревогу. Каждый результат требует ручной проверки.')
+            st.write('Это экспериментальная система анализа действий и их порядка. Возможны неверные типы, пропуски и ложные тревоги. Каждый результат требует ручной проверки.')
             st.write('Распознавания лиц нет. Юридическое заключение не формируется. Нормативный справочник доступен в отдельном разделе.')
     with right:
         markup('<div class="section-heading"><span>02</span><h2>Результат анализа</h2></div>')
@@ -210,7 +256,7 @@ def research_page():
     a.metric('Сценариев в справочнике', len(rules))
     b.metric('Нормативных источников', len({r.get('source_url') for r in rules if r.get('source_url')}))
     c.metric('Дата research-каталога', catalog.get('as_of', 'Не указана'))
-    st.info('Справочник для специалиста. Сценарии из research ещё не распознаются текущей моделью. Совпадение с нормой и вывод о нарушении автоматически не устанавливаются.')
+    st.info('Справочник для специалиста. Модель предполагает типы действий, но их соответствие пунктам этого справочника ещё не проверено. Вывод о нарушении нормы автоматически не устанавливается.')
     search, filter_column = st.columns([3, 1])
     query = search.text_input('Поиск по справочнику', placeholder='Название, пункт или текст требования…')
     selected = filter_column.selectbox('Пункт источника', ['Все пункты'] + sorted({r['source_clause'] for r in rules}))

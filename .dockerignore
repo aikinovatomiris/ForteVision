@@ -7,3 +7,12 @@ artifacts
 research
 .uploads
 **/__pycache__
+
+.venv312
+runtime
+*.whl
+*.gguf
+*.mov
+*.mp4
+*.m4v
+.env.*

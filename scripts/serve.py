@@ -46,6 +46,12 @@ def main():
         raise KeyboardInterrupt
     signal.signal(signal.SIGTERM, stop)
     try:
+        from app.config import Settings
+        if Settings().backend == 'local_vlm' or os.getenv('FORTEVISION_START_VLM') == '1':
+            from scripts.vlm_runtime import start
+            vision = start()
+            if vision is not None:
+                children.append(vision)
         for command in commands:
             children.append(subprocess.Popen(command, cwd=ROOT, env=env))
         print(f'ForteVision UI: http://127.0.0.1:{args.ui_port} | API: http://127.0.0.1:{args.api_port}', flush=True)

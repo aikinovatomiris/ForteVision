@@ -9,7 +9,7 @@ class ResNetExtractor:
     architecture = 'resnet18'
     weights_name = 'IMAGENET1K_V1'
 
-    def __init__(self, weights_path: Path, device='cpu'):
+    def __init__(self, weights_path: Path, device='cpu', image_mode='center'):
         weights_path = Path(weights_path)
         if not weights_path.is_file():
             raise ForteError('Нет локальных весов ResNet18. Выполните python -m scripts.prepare_weights заранее.')
@@ -19,6 +19,9 @@ class ResNetExtractor:
             raise ForteError('device должен быть cpu или cuda')
         if device == 'cuda' and not torch.cuda.is_available():
             raise ForteError('CUDA запрошена, но недоступна')
+        if image_mode not in ('center', 'full_frame'):
+            raise ForteError('Unknown image preprocessing mode')
+        self.image_mode = image_mode
         self.torch, self.device = torch, torch.device(device)
         torch.set_num_threads(min(4, torch.get_num_threads()))
         self.weights_sha256 = sha256(weights_path)
@@ -34,8 +37,13 @@ class ResNetExtractor:
         self.transform = ResNet18_Weights.IMAGENET1K_V1.transforms()
 
     def preprocess(self, frame):
-        from PIL import Image
-        return self.transform(Image.fromarray(frame[:, :, ::-1].copy()))
+        from PIL import Image, ImageOps
+        image = Image.fromarray(frame[:, :, ::-1].copy())
+        if self.image_mode == 'full_frame':
+            from torchvision.transforms.functional import to_tensor, normalize
+            image = ImageOps.pad(image, (320, 320), color=(124, 116, 104))
+            return normalize(to_tensor(image), self.transform.mean, self.transform.std)
+        return self.transform(image)
 
     def embed(self, tensors):
         tensor = self.torch.stack(tensors).to(self.device)

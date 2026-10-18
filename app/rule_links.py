@@ -10,7 +10,7 @@ def attach_verified_sources(result, settings):
     result = deepcopy(result)
     rules = RuleEngine(settings.rules)
     model_hash = None
-    for event in result.get('violations', []):
+    for event in result.get('violations', []) + result.get('review_candidates', []):
         # Only administrator-approved bindings can add normative references.
         event.pop('rule_references', None)
         event_type = event.get('event_type')
@@ -19,20 +19,30 @@ def attach_verified_sources(result, settings):
         candidates = rules.sources_for(event_type)
         if not candidates:
             continue
-        model_hash = model_hash or sha256(settings.model)
+        # Normative context does not certify detector accuracy.
+        model_hash = model_hash or (sha256(settings.model) if settings.model.is_file() else None)
         references = []
         for rule in candidates:
-            if rule.get('detector_model_sha256') != model_hash or not rule.get('validation_report'):
+            context = rule.get('reference_role') == 'normative_context'
+            if context:
+                if not rule.get('applicability') or not rule.get('source_audit'):
+                    continue
+                audit = settings.rules.parent / rule['source_audit']
+                if not audit.is_file() or sha256(audit) != rule.get('source_audit_sha256'):
+                    continue
+            elif rule.get('detector_model_sha256') != model_hash or not rule.get('validation_report'):
                 continue
-            report = Path(rule['validation_report'])
+            report = Path(rule['source_audit'] if context else rule['validation_report'])
             if not report.is_absolute():
                 report = settings.rules.parent / report
             if not report.is_file():
                 continue
             references.append(dict(source_title=rule['source_title'], source_url=rule['source_url'],
-                                   section=rule['section'], verified_at=rule['verified_at']))
+                                   section=rule['section'], verified_at=rule['verified_at'],
+                                   applicability=rule.get('applicability'), reference_role=rule.get('reference_role', 'validated_binding')))
         if references:
             event['rule_references'] = references
             sources = '; '.join(f'{r["source_title"]}, {r["section"]}: {r["source_url"]}' for r in references)
-            event['description'] += f' Основание для ручной проверки: {sources}.'
+            notes = ' '.join(dict.fromkeys(r['applicability'] for r in references if r.get('applicability')))
+            event['description'] += f' Нормативный контекст для ручной проверки: {sources}. {notes}'
     return result

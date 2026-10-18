@@ -42,7 +42,9 @@ def check_video(url, key, video):
                 elapsed = time.monotonic()-started
                 return dict(video=video.name, success=elapsed < 300, elapsed_seconds=elapsed,
                             verdict=result['verdict'], events=len(result['violations']),
-                            evidence_frames=sum(len(e['evidence_frames']) for e in result['violations']),
+                            review_candidates=len(result.get('review_candidates', [])),
+                            assessment_status=result.get('assessment_status'),
+                            evidence_frames=sum(len(e['evidence_frames']) for e in result['violations'] + result.get('review_candidates', [])),
                             statuses=sorted(set(statuses)))
             if result['status'] != 'processing':
                 raise ValueError('Invalid job status')
