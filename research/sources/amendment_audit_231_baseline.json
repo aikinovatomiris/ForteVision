@@ -1,0 +1,307 @@
+{
+  "schema_version": "1.0.0",
+  "audit_id": "KZ-NBRK-231-2026-10-17",
+  "as_of": "2026-10-17",
+  "act_number": "231",
+  "adopted_on": "2019-11-29",
+  "act_status": "in_force",
+  "verification_status": "verified_against_available_official_consolidated_text_and_amendment_history",
+  "current_text_url": "https://old.adilet.zan.kz/rus/docs/V1900019680",
+  "history_url": "https://old.adilet.zan.kz/rus/docs/V1900019680/history",
+  "latest_amending_act": {
+    "number": "78",
+    "adopted_on": "2026-06-30",
+    "effective_from": "2026-07-20"
+  },
+  "consolidated_effective_from": "2026-07-20",
+  "source_history_latest_label": "2026-07-12",
+  "history_dates": [
+    "29.11.2019",
+    "01.01.2020",
+    "16.12.2020",
+    "28.02.2022",
+    "13.06.2022",
+    "19.12.2022",
+    "10.11.2025",
+    "16.03.2026",
+    "30.06.2026",
+    "30.06.2026",
+    "30.06.2026",
+    "30.06.2026",
+    "12.07.2026",
+    "12.07.2026",
+    "12.07.2026",
+    "12.07.2026",
+    "12.07.2026",
+    "12.07.2026",
+    "12.07.2026"
+  ],
+  "date_semantics": "Даты в колонке истории «Дата изменения» не тождественны датам вступления поправок в силу. Повторные строки истории не считаются отдельными изменяющими актами. Последний срок вступления установлен по № 78 и его публикации.",
+  "original_effective_from": "2020-01-01",
+  "original_transition": "По п. 7 самого № 231 заголовок и п. 1 применялись во временной редакции до 16.12.2020; это не отдельное изменяющее постановление.",
+  "amendments": [
+    {
+      "source_id": "S7",
+      "number": "19",
+      "adopted_on": "2022-02-28",
+      "registration": "27073 от 10.03.2022",
+      "code": "V2200027073",
+      "published_on": "2022-03-14",
+      "effective_dates": [
+        "2022-03-25",
+        "2022-06-13"
+      ],
+      "affected": "Преамбула; пп. 1, 7, 19, 31, 102; приложение 4.",
+      "effect": "П. 2 Перечня. Общий срок — 25.03.2022; редакции пп. 19 и 31 — 13.06.2022 (90 дней после публикации). Основание: п. 5 постановления.",
+      "priority_rule_impact": "П. 19 входит в R04; последующее изменение подп. 2) учтено по № 71.",
+      "url": "https://old.adilet.zan.kz/rus/docs/V2200027073",
+      "publication_source_url": "https://old.adilet.zan.kz/rus/docs/V2200027073/info"
+    },
+    {
+      "source_id": "S8",
+      "number": "125",
+      "adopted_on": "2022-12-19",
+      "registration": "31252 от 23.12.2022",
+      "code": "V2200031252",
+      "published_on": "2022-12-28",
+      "effective_dates": [
+        "2023-01-08"
+      ],
+      "affected": "Пп. 5, 10-1, 29; параграф 5-1 (63-1–63-6); пп. 87, 87-1, 90, 90-1, 92, подп. 3) п. 107, пп. 121, 131, 133; приложение 2.",
+      "effect": "П. 3 Перечня, с 08.01.2023. Отложенный срок 180 дней в п. 4 постановления относится к п. 2 Перечня, а не к изменениям № 231.",
+      "priority_rule_impact": "Пп. 19, 20, 22, 24, 25 не изменены.",
+      "url": "https://old.adilet.zan.kz/rus/docs/V2200031252",
+      "publication_source_url": "https://old.adilet.zan.kz/rus/docs/V2200031252/info"
+    },
+    {
+      "source_id": "S5",
+      "number": "71",
+      "adopted_on": "2025-11-10",
+      "registration": "37429 от 18.11.2025",
+      "code": "V2500037429",
+      "published_on": "2025-11-20",
+      "effective_dates": [
+        "2025-12-01"
+      ],
+      "affected": "Преамбула; п. 1, подп. 12) п. 2, подп. 1) п. 3, п. 12, подп. 2)–3) п. 19, п. 29, подп. 2) п. 31, пп. 51, 55, 86, 91–94, 102, 106, 114, 123; исключён п. 95; приложение 4.",
+      "effect": "П. 4 Перечня, с 01.12.2025. Исключение до 01.01.2026 в п. 4 постановления относится к п. 3 Перечня и приложению 1, а не к № 231.",
+      "priority_rule_impact": "Для R04 в п. 19(2) действуют ссылки на пп. 57 и 58; требование полистного пересчёта сохранено. Обновлён п. 106, на который ссылается п. 24; условия проверки целостности и пересчёта по п. 25 сохранены.",
+      "url": "https://old.adilet.zan.kz/rus/docs/V2500037429",
+      "publication_source_url": "https://old.adilet.zan.kz/rus/docs/V2500037429/info"
+    },
+    {
+      "source_id": "S3",
+      "number": "25",
+      "adopted_on": "2026-03-16",
+      "registration": "38217 от 27.03.2026",
+      "code": "V2600038217",
+      "published_on": "2026-04-08",
+      "effective_dates": [
+        "2026-04-19",
+        "2026-07-12"
+      ],
+      "affected": "П. 2; подп. 1) п. 3; пп. 7, 10-1, 53-1, 74, 87-1, 92, 93; исключён п. 97; новый параграф 2-1 (109-1–109-11), приложения 4-1 и 4-2.",
+      "effect": "П. 2 постановления: основная часть — 19.04.2026; пп. 10-1, 74, 87-1 — 12.07.2026 по п. 6. Цифровые документы, Цифровой кодекс и Закон «О кибербезопасности»; в п. 74 — автоматизированная цифровая система.",
+      "priority_rule_impact": "Пп. 19, 20, 22, 24, 25 не изменены. П. 3 постановления отменяет № 159 от 12.09.2019 и № 21 от 28.02.2022.",
+      "url": "https://old.adilet.zan.kz/rus/docs/V2600038217",
+      "publication_source_url": "https://old.adilet.zan.kz/rus/docs/V2600038217/history"
+    },
+    {
+      "source_id": "S4",
+      "number": "78",
+      "adopted_on": "2026-06-30",
+      "registration": "39191 от 02.07.2026",
+      "code": "V2600039191",
+      "published_on": "2026-07-09",
+      "effective_dates": [
+        "2026-07-20"
+      ],
+      "affected": "П. 51; часть вторая п. 53-1; приложение 5 (новая редакция по приложению 22 к Перечню).",
+      "effect": "П. 6 Перечня; русский текст, казахский текст не меняется. Написание «теңге», количества монет в пп. 51 и 53-1 сохранены. Срок по п. 4 постановления — 20.07.2026. П. 11 Перечня также меняет приложение 7 к № 25, без изменения п. 2 и сроков № 25.",
+      "priority_rule_impact": "R01–R05 не затронуты; действующая версия всего источника учитывает эту поправку.",
+      "url": "https://old.adilet.zan.kz/rus/docs/V2600039191",
+      "publication_source_url": "https://old.adilet.zan.kz/rus/docs/V2600039191/info"
+    }
+  ],
+  "completeness": {
+    "official_amendment_acts_found": 5,
+    "official_text_footnotes_match_history": true,
+    "later_amendments_found": false,
+    "official_portal_updated_on": "2026-10-16",
+    "official_portal_documents_through": "2026-10-14",
+    "secondary_crosscheck_url": "https://prg.kz/m/amp/document/36035464/",
+    "secondary_crosscheck_checked_on": "2026-10-17",
+    "limitation": "Официальный портал показывает обновление 16.10.2026 и документы по 14.10.2026. По проверенной истории и дополнительному поиску на 17.10.2026 более поздних поправок/отмены не выявлено; публикации, ещё не включённые в базы, не исключаются. Это предел свежести источника, а не незакрытое расхождение мартовского PDF."
+  },
+  "stale_pdf": {
+    "path": "sources/231_pdf.pdf",
+    "revision_label": "2026-03-16",
+    "current_consolidation": false,
+    "use": "Архивный снимок. Не использовать отдельно как полный действующий текст на 17.10.2026."
+  },
+  "affected_after_stale_pdf": [
+    "10-1",
+    "51",
+    "53-1 part 2",
+    "74",
+    "87-1",
+    "appendix 5"
+  ],
+  "priority_rule_impact": "Нормативные требования R01–R05 актуальны; июльские поправки не требуют менять условия событий. Обновлены версии, ссылки, проверенные пункты и доказательства проверки.",
+  "artifacts": [
+    {
+      "path": "sources/audit_231/125_current.html",
+      "url": "https://old.adilet.zan.kz/rus/docs/V2200031252",
+      "sha256": "a9b8560b1ebb51e40d39fe1caabecec55fe77e5d409b41a1c366edf0a5a145ca",
+      "retrieved_on": "2026-10-17",
+      "format": "html"
+    },
+    {
+      "path": "sources/audit_231/125_current.txt",
+      "url": "https://old.adilet.zan.kz/rus/docs/V2200031252",
+      "sha256": "207360fb1e6225c2f1a6aa00e0d2616c0542804bcbd3959f3f0abeccd2564033",
+      "retrieved_on": "2026-10-17",
+      "format": "txt"
+    },
+    {
+      "path": "sources/audit_231/125_info.html",
+      "url": "https://old.adilet.zan.kz/rus/docs/V2200031252/info",
+      "sha256": "a8e882563101c5a309872cf4cbe2cd99459ee5a984e06888f3a297b76566a265",
+      "retrieved_on": "2026-10-17",
+      "format": "html"
+    },
+    {
+      "path": "sources/audit_231/125_info.txt",
+      "url": "https://old.adilet.zan.kz/rus/docs/V2200031252/info",
+      "sha256": "22ef38a7c0363bbbba6469cf022544b35ab85985ccab650a4381f186ff65bf9f",
+      "retrieved_on": "2026-10-17",
+      "format": "txt"
+    },
+    {
+      "path": "sources/audit_231/19_current.html",
+      "url": "https://old.adilet.zan.kz/rus/docs/V2200027073",
+      "sha256": "a7214c3947d6e4e45a5b5864133988bdda2747b7b30061dff5b0edfa9b76d98d",
+      "retrieved_on": "2026-10-17",
+      "format": "html"
+    },
+    {
+      "path": "sources/audit_231/19_current.txt",
+      "url": "https://old.adilet.zan.kz/rus/docs/V2200027073",
+      "sha256": "aa48c1f9fec1158433e4573e74775980f7ac71ed4b601b55351c783d3b3eb81b",
+      "retrieved_on": "2026-10-17",
+      "format": "txt"
+    },
+    {
+      "path": "sources/audit_231/19_info.html",
+      "url": "https://old.adilet.zan.kz/rus/docs/V2200027073/info",
+      "sha256": "22cc61e98a8fe5f5bb03e65c44925827db8ceeaedc2c2c614b20841adde2e2a4",
+      "retrieved_on": "2026-10-17",
+      "format": "html"
+    },
+    {
+      "path": "sources/audit_231/19_info.txt",
+      "url": "https://old.adilet.zan.kz/rus/docs/V2200027073/info",
+      "sha256": "b04863c6b349f237bc234dd576e6f9bd8422a4325c89b978451932c1b5ccbe46",
+      "retrieved_on": "2026-10-17",
+      "format": "txt"
+    },
+    {
+      "path": "sources/audit_231/231_current.html",
+      "url": "https://old.adilet.zan.kz/rus/docs/V1900019680",
+      "sha256": "46b670bb4eeadd7fd2105eb756a87586dc7724dc9abea6951b72609ccf6bdc98",
+      "retrieved_on": "2026-10-17",
+      "format": "html"
+    },
+    {
+      "path": "sources/audit_231/231_current.txt",
+      "url": "https://old.adilet.zan.kz/rus/docs/V1900019680",
+      "sha256": "1e990be5860ffdd67a86b190bb87e27384ef8623908209914565439efc588b23",
+      "retrieved_on": "2026-10-17",
+      "format": "txt"
+    },
+    {
+      "path": "sources/audit_231/231_history.html",
+      "url": "https://old.adilet.zan.kz/rus/docs/V1900019680/history",
+      "sha256": "0e924097f17e9d3085d600577c85f976742a02aea7fcb49e1e045831ec1e5b99",
+      "retrieved_on": "2026-10-17",
+      "format": "html"
+    },
+    {
+      "path": "sources/audit_231/231_history.txt",
+      "url": "https://old.adilet.zan.kz/rus/docs/V1900019680/history",
+      "sha256": "c7b89c6b0f34bdc559b417ed997ac850d67882a748f5333d62d15fb31f5a1b26",
+      "retrieved_on": "2026-10-17",
+      "format": "txt"
+    },
+    {
+      "path": "sources/audit_231/25_history.html",
+      "url": "https://old.adilet.zan.kz/rus/docs/V2600038217/history",
+      "sha256": "419cfa8ff725f196da6b323ceea76d875925a2b25df94c7d4a86727ad569b9a2",
+      "retrieved_on": "2026-10-17",
+      "format": "html"
+    },
+    {
+      "path": "sources/audit_231/25_history.txt",
+      "url": "https://old.adilet.zan.kz/rus/docs/V2600038217/history",
+      "sha256": "d03188365adc653f16354ba4b45dc8f2cfcd0620295a4eff1f8cbf5dd4b97d9a",
+      "retrieved_on": "2026-10-17",
+      "format": "txt"
+    },
+    {
+      "path": "sources/audit_231/71_info.html",
+      "url": "https://old.adilet.zan.kz/rus/docs/V2500037429/info",
+      "sha256": "c467617bc538a7b49351b0b3bbd17ff5fb68beb0f2507275332d7be47134768c",
+      "retrieved_on": "2026-10-17",
+      "format": "html"
+    },
+    {
+      "path": "sources/audit_231/71_info.txt",
+      "url": "https://old.adilet.zan.kz/rus/docs/V2500037429/info",
+      "sha256": "fc54f59acbe980e01ee7a23456442c11e6081cba94558ce3f10dbb3d41e5e841",
+      "retrieved_on": "2026-10-17",
+      "format": "txt"
+    },
+    {
+      "path": "sources/audit_231/71_official.pdf",
+      "url": "https://zan.gov.kz/api/documents/217056/rus/download/pdf",
+      "sha256": "c17a84b4c496b2a7bbd0080b9ba08a3f13f60e2f587eba43f7f3311164c557e8",
+      "retrieved_on": "2026-10-17",
+      "format": "pdf"
+    },
+    {
+      "path": "sources/audit_231/71_official.txt",
+      "url": "https://zan.gov.kz/api/documents/217056/rus/download/pdf",
+      "sha256": "0843f0cf5dfb5ade1357947cb6dd9f5c2959c32fc9ca87b6fd7f96524f388159",
+      "retrieved_on": "2026-10-17",
+      "format": "txt"
+    },
+    {
+      "path": "sources/audit_231/78_current.html",
+      "url": "https://old.adilet.zan.kz/rus/docs/V2600039191/compare",
+      "sha256": "273fad4ce424456ae4bcd38b1fbdefbb114afcfd6e2e37d5916dcc341f9a4847",
+      "retrieved_on": "2026-10-17",
+      "format": "html"
+    },
+    {
+      "path": "sources/audit_231/78_current.txt",
+      "url": "https://old.adilet.zan.kz/rus/docs/V2600039191/compare",
+      "sha256": "4ae4175de48c7bae6e23f705438ef8467ca8ce20818969e813b48dde5c291bb2",
+      "retrieved_on": "2026-10-17",
+      "format": "txt"
+    },
+    {
+      "path": "sources/audit_231/78_info.html",
+      "url": "https://old.adilet.zan.kz/rus/docs/V2600039191/info",
+      "sha256": "f3d42ebf5f0445295461d73d1f0e89d9e748721329f252899e70e9f62f9de64a",
+      "retrieved_on": "2026-10-17",
+      "format": "html"
+    },
+    {
+      "path": "sources/audit_231/78_info.txt",
+      "url": "https://old.adilet.zan.kz/rus/docs/V2600039191/info",
+      "sha256": "6aedd51f375748ad1ea814713ce782ada850cb1e6b90f90bc20f2c93ca21b707",
+      "retrieved_on": "2026-10-17",
+      "format": "txt"
+    }
+  ]
+}

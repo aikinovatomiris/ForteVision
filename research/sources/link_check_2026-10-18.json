@@ -1,0 +1,216 @@
+{
+  "checked_on": "2026-10-18",
+  "method": "HTTP GET, normal TLS verification, timeout 12 seconds, response preview at most 256 KiB",
+  "scope": "URL syntax and HTTP reachability only; no renewed legal validity or revision certification. Historical archive audits preserved separately.",
+  "url_count": 34,
+  "summary": {
+    "reachable_javascript_shell_content_not_verified": 14,
+    "not_verified": 18,
+    "reachable_content_not_legally_reviewed": 1,
+    "reachable_pdf_content_not_reviewed": 1
+  },
+  "results": [
+    {
+      "url": "https://adilet.zan.kz/rus/docs/V1700016120",
+      "http_status": 200,
+      "final_url": "https://adilet.zan.kz/rus/docs/V1700016120",
+      "content_type": "text/html",
+      "result": "reachable_javascript_shell_content_not_verified"
+    },
+    {
+      "url": "https://adilet.zan.kz/rus/docs/V1900018545",
+      "http_status": 200,
+      "final_url": "https://adilet.zan.kz/rus/docs/V1900018545",
+      "content_type": "text/html",
+      "result": "reachable_javascript_shell_content_not_verified"
+    },
+    {
+      "url": "https://adilet.zan.kz/rus/docs/V1900019680",
+      "http_status": 200,
+      "final_url": "https://adilet.zan.kz/rus/docs/V1900019680",
+      "content_type": "text/html",
+      "result": "reachable_javascript_shell_content_not_verified"
+    },
+    {
+      "url": "https://adilet.zan.kz/rus/docs/V1900019680?tab=history",
+      "http_status": 200,
+      "final_url": "https://adilet.zan.kz/rus/docs/V1900019680?tab=history",
+      "content_type": "text/html",
+      "result": "reachable_javascript_shell_content_not_verified"
+    },
+    {
+      "url": "https://adilet.zan.kz/rus/docs/V2000020075",
+      "http_status": 200,
+      "final_url": "https://adilet.zan.kz/rus/docs/V2000020075",
+      "content_type": "text/html",
+      "result": "reachable_javascript_shell_content_not_verified"
+    },
+    {
+      "url": "https://adilet.zan.kz/rus/docs/V2000020075?tab=history",
+      "http_status": 200,
+      "final_url": "https://adilet.zan.kz/rus/docs/V2000020075?tab=history",
+      "content_type": "text/html",
+      "result": "reachable_javascript_shell_content_not_verified"
+    },
+    {
+      "url": "https://adilet.zan.kz/rus/docs/V2000021287",
+      "http_status": 200,
+      "final_url": "https://adilet.zan.kz/rus/docs/V2000021287",
+      "content_type": "text/html",
+      "result": "reachable_javascript_shell_content_not_verified"
+    },
+    {
+      "url": "https://adilet.zan.kz/rus/docs/V2200027073",
+      "http_status": 200,
+      "final_url": "https://adilet.zan.kz/rus/docs/V2200027073",
+      "content_type": "text/html",
+      "result": "reachable_javascript_shell_content_not_verified"
+    },
+    {
+      "url": "https://adilet.zan.kz/rus/docs/V2200031252",
+      "http_status": 200,
+      "final_url": "https://adilet.zan.kz/rus/docs/V2200031252",
+      "content_type": "text/html",
+      "result": "reachable_javascript_shell_content_not_verified"
+    },
+    {
+      "url": "https://adilet.zan.kz/rus/docs/V2400035552",
+      "http_status": 200,
+      "final_url": "https://adilet.zan.kz/rus/docs/V2400035552",
+      "content_type": "text/html",
+      "result": "reachable_javascript_shell_content_not_verified"
+    },
+    {
+      "url": "https://adilet.zan.kz/rus/docs/V2400035552?tab=publication",
+      "http_status": 200,
+      "final_url": "https://adilet.zan.kz/rus/docs/V2400035552?tab=publication",
+      "content_type": "text/html",
+      "result": "reachable_javascript_shell_content_not_verified"
+    },
+    {
+      "url": "https://adilet.zan.kz/rus/docs/V2500037429",
+      "http_status": 200,
+      "final_url": "https://adilet.zan.kz/rus/docs/V2500037429",
+      "content_type": "text/html",
+      "result": "reachable_javascript_shell_content_not_verified"
+    },
+    {
+      "url": "https://adilet.zan.kz/rus/docs/V2600038217",
+      "http_status": 200,
+      "final_url": "https://adilet.zan.kz/rus/docs/V2600038217",
+      "content_type": "text/html",
+      "result": "reachable_javascript_shell_content_not_verified"
+    },
+    {
+      "url": "https://adilet.zan.kz/rus/docs/V2600039191",
+      "http_status": 200,
+      "final_url": "https://adilet.zan.kz/rus/docs/V2600039191",
+      "content_type": "text/html",
+      "result": "reachable_javascript_shell_content_not_verified"
+    },
+    {
+      "url": "https://old.adilet.zan.kz/rus/docs/V1900019680",
+      "result": "not_verified",
+      "error": "The read operation timed out"
+    },
+    {
+      "url": "https://old.adilet.zan.kz/rus/docs/V1900019680/history",
+      "result": "not_verified",
+      "error": "The read operation timed out"
+    },
+    {
+      "url": "https://old.adilet.zan.kz/rus/docs/V2000020075",
+      "result": "not_verified",
+      "error": "The read operation timed out"
+    },
+    {
+      "url": "https://old.adilet.zan.kz/rus/docs/V2000020075/history",
+      "result": "not_verified",
+      "error": "The read operation timed out"
+    },
+    {
+      "url": "https://old.adilet.zan.kz/rus/docs/V2000020075/info",
+      "result": "not_verified",
+      "error": "The read operation timed out"
+    },
+    {
+      "url": "https://old.adilet.zan.kz/rus/docs/V2200027073",
+      "result": "not_verified",
+      "error": "The read operation timed out"
+    },
+    {
+      "url": "https://old.adilet.zan.kz/rus/docs/V2200027073/info",
+      "result": "not_verified",
+      "error": "The read operation timed out"
+    },
+    {
+      "url": "https://old.adilet.zan.kz/rus/docs/V2200031252",
+      "result": "not_verified",
+      "error": "The read operation timed out"
+    },
+    {
+      "url": "https://old.adilet.zan.kz/rus/docs/V2200031252/info",
+      "result": "not_verified",
+      "error": "The read operation timed out"
+    },
+    {
+      "url": "https://old.adilet.zan.kz/rus/docs/V2400035552",
+      "result": "not_verified",
+      "error": "The read operation timed out"
+    },
+    {
+      "url": "https://old.adilet.zan.kz/rus/docs/V2400035552/info",
+      "result": "not_verified",
+      "error": "The read operation timed out"
+    },
+    {
+      "url": "https://old.adilet.zan.kz/rus/docs/V2500037429",
+      "result": "not_verified",
+      "error": "The read operation timed out"
+    },
+    {
+      "url": "https://old.adilet.zan.kz/rus/docs/V2500037429/info",
+      "result": "not_verified",
+      "error": "The read operation timed out"
+    },
+    {
+      "url": "https://old.adilet.zan.kz/rus/docs/V2600038217",
+      "result": "not_verified",
+      "error": "The read operation timed out"
+    },
+    {
+      "url": "https://old.adilet.zan.kz/rus/docs/V2600038217/history",
+      "result": "not_verified",
+      "error": "The read operation timed out"
+    },
+    {
+      "url": "https://old.adilet.zan.kz/rus/docs/V2600039191",
+      "result": "not_verified",
+      "error": "The read operation timed out"
+    },
+    {
+      "url": "https://old.adilet.zan.kz/rus/docs/V2600039191/compare",
+      "result": "not_verified",
+      "error": "The read operation timed out"
+    },
+    {
+      "url": "https://old.adilet.zan.kz/rus/docs/V2600039191/info",
+      "result": "not_verified",
+      "error": "The read operation timed out"
+    },
+    {
+      "url": "https://prg.kz/m/amp/document/36035464/",
+      "http_status": 200,
+      "final_url": "https://prg.kz/m/amp/document/36035464/",
+      "content_type": "text/html",
+      "result": "reachable_content_not_legally_reviewed"
+    },
+    {
+      "url": "https://zan.gov.kz/api/documents/217056/rus/download/pdf",
+      "http_status": 200,
+      "final_url": "https://zan.gov.kz/api/documents/217056/rus/download/pdf",
+      "content_type": "application/pdf",
+      "result": "reachable_pdf_content_not_reviewed"
+    }
+  ]
+}
