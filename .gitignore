@@ -19,6 +19,7 @@ wheelhouse/
 *.sqlite3
 *.sqlite3-*
 runtime/
+fortevis_*.xlsx
 
 .venv312/
 

@@ -87,6 +87,8 @@ class DoneJob(BaseModel):
     analysis_limitations: list[str] | None = None
     analysis_complete: bool | None = None
     analysis_backend: str | None = None
+    model_info: dict | None = None
+    video_duration_seconds: float | None = Field(default=None, gt=0, allow_inf_nan=False)
     sampled_frames: int | None = None
     # Optional additions; the jury's required fields remain unchanged.
     elapsed_seconds: float | None = None

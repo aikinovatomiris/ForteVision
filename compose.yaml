@@ -6,7 +6,7 @@ services:
     restart: unless-stopped
     env_file: .env
     environment:
-      FORTEVISION_MODEL: ${FORTEVISION_CONTAINER_MODEL:-/app/models/action_states_v8.joblib}
+      FORTEVISION_MODEL: ${FORTEVISION_CONTAINER_MODEL:-/app/models/anchored_v3.joblib}
       FORTEVISION_WEIGHTS: /app/models/resnet18-f37072fd.pth
       FORTEVISION_API_URL: http://127.0.0.1:8000
       FORTEVISION_DEVICE: cpu

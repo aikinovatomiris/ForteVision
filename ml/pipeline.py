@@ -59,7 +59,7 @@ def analyze(video: Path, model: Path, weights: Path, device='cpu', budget_second
     # No category has correct-type held-group validation sufficient for automatic
     # findings. Keep every candidate; abstention must not masquerade as accuracy.
     from .triage import route_events
-    triage_enabled = hasattr(classifier, 'presence')
+    triage_enabled = hasattr(classifier, 'presence') or metadata.get('review_only', False)
     if triage_enabled:
         alerts, review = route_events(events, validated_types=set())
         events = [dict(e, review_only=False) for e in alerts] + [dict(e, review_only=True) for e in review]
@@ -72,8 +72,9 @@ def analyze(video: Path, model: Path, weights: Path, device='cpu', budget_second
         if event.get('event_type'):
             item['event_type'] = event['event_type']
         context_before = 20. if event.get('event_type') == 'prior_deposit_outside_storage' else 5.
-        start = max(0., event['start'] - context_before)
-        end = min(info.get('duration_seconds', event['end'] + 5.), event['end'] + 5.)
+        start = max(0., min(event['start'] - context_before, event.get('sequence_start', event['start'])))
+        end = min(info.get('duration_seconds', event['end'] + 5.),
+                  max(event['end'] + 5., event.get('sequence_end', event['end'])))
         item['context_start_sec'] = start
         item['context_end_sec'] = end
         item['description'] += (f' Контекст для просмотра: {start:.1f}–{end:.1f} с; '
@@ -90,10 +91,27 @@ def analyze(video: Path, model: Path, weights: Path, device='cpu', budget_second
     elapsed = perf_counter()-started
     result = dict(verdict='violation' if violations else 'no_violation', violations=violations,
                 elapsed_seconds=elapsed, within_five_minutes=elapsed < 300)
+    result['model_info'] = dict(artifact=Path(model).name, sha256=metadata.get('pipeline_sha256'),
+        supports_event_types=hasattr(classifier, 'events'),
+        image_mode=metadata.get('image_mode', 'center'))
+    if metadata.get('quality_warning'):
+        result['model_info']['quality_warning'] = metadata['quality_warning']
+    result['video_duration_seconds'] = info.get('duration_seconds')
+    if not hasattr(classifier, 'events'):
+        result['analysis_complete'] = False
+        result['analysis_limitations'] = [
+            'Подключён бинарный классификатор без обучения типам действий. Он не может описать, что произошло.',
+            'Выделенный момент — максимум оценки окна, а не доказанная граница действия. Возможны ложные тревоги и пропуски.']
     if triage_enabled:
         result.update(review_candidates=review_candidates, review_required=bool(review_candidates),
             assessment_status='needs_review' if review_candidates else 'incomplete',
-            candidate_count=len(violations)+len(review_candidates))
+            candidate_count=len(violations)+len(review_candidates), analysis_complete=False)
+        if metadata.get('review_only'):
+            result['analysis_backend'] = 'typed_review_classifier'
+            result['analysis_limitations'] = [
+                'Тип события — гипотеза модели, обученной на описаниях команды; это не подтверждённое распознавание каждого шага.',
+                'Отсутствие гипотез не доказывает отсутствие нарушения. На каждый тип пока мало независимых примеров.',
+                'Нормативная ссылка задаёт контекст проверки; применимость нормы и фактические действия проверяет человек.']
     if hasattr(classifier, 'presence'):
         result.update(analysis_backend='classifier_with_action_supervision', analysis_complete=False,
             workflow_checks=[dict(rule_id='visual_coverage', state='inconclusive',title='Полнота проверки',

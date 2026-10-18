@@ -136,3 +136,55 @@ def test_review_result_keeps_candidate_and_never_shows_clean_banner(ui):
     rendered=' '.join(item.value for item in app.markdown)
     assert 'Нужна проверка выделенных моментов' in rendered
     assert 'Нарушение не обнаружено' not in rendered
+
+
+def test_quality_warning_visible_without_workflow_checks(ui):
+    app,_=ui
+    app.session_state['job_id']='quality-job'
+    app.session_state['result']=dict(job_id='quality-job',status='done',verdict='no_violation',
+        violations=[],analysis_complete=False,model_info={'quality_warning':'Проверка качества не пройдена'},
+        analysis_limitations=['Мало независимых примеров'])
+    app.run()
+    assert not app.exception
+    assert any('Проверка качества не пройдена' in item.value for item in app.warning)
+    assert any('Мало независимых примеров' in item.value for item in app.caption)
+
+
+def test_binary_capabilities_and_local_feedback(ui, tmp_path):
+    from types import SimpleNamespace
+    app, _ = ui
+    app.session_state['job_id'] = 'feedback-job'
+    app.session_state['result'] = dict(job_id='feedback-job', status='done', verdict='no_violation',
+        violations=[], analysis_complete=False, video_duration_seconds=10.,
+        model_info=dict(artifact='classifier.joblib', sha256='test', supports_event_types=False))
+    app.session_state['analyzed_video_bytes'] = b'fixture-video'
+    app.session_state['analyzed_video_job_id'] = 'feedback-job'
+    app.run()
+    assert any('Распознавание конкретных действий' in w.value for w in app.warning)
+    app.text_area[0].set_value('Здесь кассир не покидает рабочее место')
+    button = next(b for b in app.button if b.label == 'Сохранить исправление локально')
+    with patch('app.config.Settings', return_value=SimpleNamespace(job_db=tmp_path/'jobs.sqlite3')):
+        button.click().run()
+    assert not app.exception
+    records = list((tmp_path/'feedback').glob('*.json'))
+    assert len(records) == 1
+    saved = json.loads(records[0].read_text(encoding='utf-8'))
+    assert saved['provenance'] == 'unknown' and saved['eligible_for_training'] is False
+
+
+def test_priority_candidate_shown_first_without_dropping_uncertain_interval(ui):
+    app, _ = ui
+    _, encoded = cv2.imencode('.jpg', np.zeros((16,16,3), np.uint8))
+    frame = dict(timestamp_sec=54., image_base64=base64.b64encode(encoded).decode())
+    unknown = dict(type='Тип события не определён',timecode_sec=54.,description='Неясный фрагмент',
+                   review_reason='Требует просмотра',review_priority='normal',evidence_frames=[frame])
+    typed = dict(unknown,type='Деньги предыдущего клиента не убраны',timecode_sec=58.,review_priority='high',
+                 event_type='prior_deposit_outside_storage')
+    app.session_state['job_id']='priority-job'
+    app.session_state['result']=dict(job_id='priority-job',status='done',verdict='no_violation',
+        violations=[],review_candidates=[unknown,typed],review_required=True,assessment_status='needs_review',analysis_complete=False)
+    app.run()
+    assert not app.exception
+    assert app.subheader[0].value=='Гипотеза: Деньги предыдущего клиента не убраны'
+    assert app.subheader[1].value=='Гипотеза: Тип события не определён'
+    assert len(app.get('imgs'))==2

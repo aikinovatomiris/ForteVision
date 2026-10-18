@@ -89,7 +89,14 @@ def render_result(result):
         st.caption('Результат не сформирован. Проверьте файл и доступность локальной модели.')
         return
     review = result.get('review_candidates', [])
-    events = result['violations'] + review
+    model_info = result.get('model_info') or {}
+    if model_info.get('quality_warning'):
+        st.warning(model_info['quality_warning'])
+    if model_info.get('supports_event_types') is False:
+        st.warning(f'Активна модель {model_info.get("artifact", "без имени")}: только бинарный сигнал. '
+                   'Распознавание конкретных действий в ней не обучено. Новый код сайта не заменяет файлы модели.')
+    events = sorted(result['violations'] + review,
+                    key=lambda event: (event.get('review_priority') != 'high', event['timecode_sec']))
     flagged = result['verdict'] == 'violation'
     title = 'Обнаружены признаки возможных нарушений' if flagged else 'Нарушение не обнаружено'
     if result.get('analysis_complete') is False and not flagged:
@@ -105,6 +112,8 @@ def render_result(result):
     b.metric('Время обработки', f'{elapsed:.1f} с' if isinstance(elapsed, (int, float)) else '—')
     c.metric('Кадры для проверки', sum(len(e['evidence_frames']) for e in events))
     st.caption('Тип и описание — гипотеза модели. Сопоставьте их с последовательностью кадров; применимость нормы проверяет человек.')
+    if any(e.get('review_priority') == 'high' for e in events):
+        st.caption('Сначала показаны приоритетные гипотезы для просмотра. Приоритет не означает подтверждение события.')
     if result.get('workflow_checks'):
         st.subheader('Последовательность операции')
         for check in result['workflow_checks']:
@@ -115,8 +124,8 @@ def render_result(result):
         with st.expander('Наблюдения модели по времени'):
             for observation in result.get('observations', []):
                 st.write(f"{timecode(observation['timestamp_sec'])} · {observation['detail']}")
-        for limitation in result.get('analysis_limitations', []):
-            st.caption(limitation)
+    for limitation in result.get('analysis_limitations', []):
+        st.caption(limitation)
     for index, event in enumerate(events, 1):
         with st.container(border=True):
             markup(f'<div class="event-heading"><span class="event-number">{index:02d}</span><span class="time-pill">{timecode(event["timecode_sec"])}</span></div>')
@@ -124,7 +133,7 @@ def render_result(result):
                 st.caption('ПРИОРИТЕТНАЯ ПРОВЕРКА' if event.get('review_priority') == 'high' else 'ТРЕБУЕТ ПРОСМОТРА')
                 st.caption(event['review_reason'])
             st.subheader(('Гипотеза: ' if event.get('review_reason') else '') + event['type'])
-            st.markdown('**Что могло произойти**')
+            st.markdown('**Сигнал модели — действие не определено**' if not event.get('event_type') else '**Что могло произойти**')
             st.write(event['description'])
             st.caption('Кадры ниже помогают проверить это предположение; отдельный кадр может не показывать всё действие.')
             start = event.get('context_start_sec')
@@ -138,7 +147,8 @@ def render_result(result):
                 else:
                     st.info('Исходное видео недоступно в этой сессии. Загрузите его и запустите анализ повторно для просмотра контекста.')
                 if not event.get('event_type'):
-                    st.write('Почему нет конкретного действия: модель не выбрала достаточно уверенно ни один изученный тип. Этот сигнал сам по себе не подтверждает нарушение.')
+                    st.write('Конкретный тип не получен. У бинарной модели классификатора действий нет; '
+                             'у модели типов возможен неопределённый ответ. Этот сигнал сам по себе не подтверждает нарушение.')
             for reference in event.get('rule_references') or []:
                 st.markdown('**Нормативное основание для ручной проверки**')
                 st.write(reference['source_title'])
@@ -151,8 +161,11 @@ def render_result(result):
                              caption=f'Кадр · {timecode(frame["timestamp_sec"])}', use_container_width=True)
     st.download_button('Скачать результат · JSON', data=json.dumps(result, ensure_ascii=False, indent=2),
                        file_name='fortevision-result.json', mime='application/json', use_container_width=True)
+    render_feedback(result)
     with st.expander('Технические сведения'):
         st.write(f'ID задания: {result["job_id"]}')
+        if model_info:
+            st.write(f'Модель: {model_info.get("artifact")} · SHA-256: {model_info.get("sha256")}')
         st.write(f'Статус проверки: {result.get("assessment_status", result["verdict"])}')
         if result.get('review_required'):
             st.caption('Поле verdict сохраняет старый бинарный формат API. no_violation при needs_review не означает чистую запись.')
@@ -169,6 +182,65 @@ def render_result(result):
             st.rerun()
         except (requests.RequestException, RuntimeError) as exc:
             st.error(str(exc))
+
+
+def render_feedback(result):
+    if not st.session_state.get('analyzed_video_bytes') or st.session_state.get('analyzed_video_job_id') != result['job_id']:
+        return
+    from app.review_feedback import DECISIONS, make_feedback, save_feedback
+    from app.config import Settings
+    with st.expander('Исправить результат / отметить пропущенное действие'):
+        st.write('Исправление сохраняется локально как черновик разметки. Оно не меняет модель и не запускает обучение.')
+        st.caption('Можно сохранить несколько интервалов. Ложная тревога в одном фрагменте не делает всё видео нормальным.')
+        rules = {r['rule_id']: r for r in (catalog or {}).get('rules', [])}
+        rule_id = st.selectbox('Сценарий из research для ручной проверки', [None] + list(rules),
+            format_func=lambda key: f'{key} · {rules[key]["event_name_ru"]}' if key else 'Не выбран / другое действие',
+            key=f'research_feedback_{result["job_id"]}')
+        selected_rule = rules.get(rule_id)
+        if selected_rule:
+            st.caption('Выбор сделан человеком. Модель этот сценарий автоматически не подтвердила.')
+            if selected_rule.get('event_type') == 'cashier_left_active_service' and any(
+                    'Операция не завершена' in c for c in selected_rule.get('detection_conditions', {}).get('suppress_if', [])):
+                st.warning('В research для этого сценария незавершённость операции указана и как условие, '
+                           'и как исключение. До согласования этой формулировки сценарий нельзя использовать как автоматическое правило.')
+            st.write('Что нужно увидеть:')
+            for condition in selected_rule.get('detection_conditions', {}).get('all_of', []):
+                st.write('• ' + condition)
+            st.write('Когда вывод нельзя делать:')
+            for condition in selected_rule.get('detection_conditions', {}).get('suppress_if', []):
+                st.write('• ' + condition)
+            st.write('Последовательность кадров: ' + selected_rule.get('evidence_requirements', {}).get('sequence', 'Не указана'))
+            st.write('Нормальное поведение: ' + selected_rule.get('normal_behavior', 'Не указано'))
+            st.caption(f'Источник по research: пункт {selected_rule["source_clause"]}; актуальность и применимость проверяет специалист.')
+            source_link(selected_rule.get('source_url'))
+        with st.form(f'feedback_{result["job_id"]}'):
+            decision = st.selectbox('Что исправить', list(DECISIONS), format_func=DECISIONS.get)
+            provenance = st.selectbox('Происхождение записи', ['unknown', 'development', 'jury_test'],
+                format_func=lambda x: {'unknown': 'Не указано', 'development': 'Разрешённое обучающее видео команды',
+                                      'jury_test': 'Тестовое видео жюри — запрещено для обучения'}[x])
+            start = st.number_input('Правильное начало, секунды', min_value=0., value=0., step=.5)
+            end = st.number_input('Правильный конец, секунды', min_value=0., value=1., step=.5)
+            event_type = st.text_input('Название наблюдаемого действия (если известно)', max_chars=200)
+            conditions = st.selectbox('Условия выбранного сценария',
+                ['not_checked', 'observed', 'absent', 'not_visible'], format_func=lambda x: {
+                    'not_checked': 'Не проверены', 'observed': 'Все необходимые условия видны, исключения проверены',
+                    'absent': 'Часть условий не выполнена', 'not_visible': 'По записи нельзя установить'}[x])
+            observed = st.text_area('Что действительно видно и почему ответ модели неверен', max_chars=3000)
+            watched = st.checkbox('Я просмотрел(а) всю запись')
+            submitted = st.form_submit_button('Сохранить исправление локально')
+        if submitted:
+            try:
+                duration = result.get('video_duration_seconds')
+                if duration is not None and end > duration:
+                    raise ValueError(f'Интервал выходит за длительность видео ({duration:.2f} с)')
+                record = make_feedback(st.session_state['analyzed_video_bytes'],
+                    st.session_state.get('analyzed_filename', 'video'), result['job_id'], decision,
+                    start, end, observed, event_type, provenance, watched, result.get('model_info'),
+                    research_rule=selected_rule, conditions_review=conditions)
+                save_feedback(record, Settings().job_db.parent/'feedback')
+                st.success('Исправление сохранено. Перед обучением проверяются разметка, происхождение и разделение выборок.')
+            except (ValueError, OSError) as exc:
+                st.error(str(exc))
 
 
 @st.fragment(run_every=2)

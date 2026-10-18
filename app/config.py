@@ -12,7 +12,7 @@ load_dotenv(ROOT/'.env')
 @dataclass
 class Settings:
     api_key: str = field(default_factory=lambda: os.getenv('FORTEVISION_API_KEY', ''))
-    model: Path = field(default_factory=lambda: Path(os.getenv('FORTEVISION_MODEL', str(ROOT/'models/action_states_v8.joblib'))).resolve())
+    model: Path = field(default_factory=lambda: Path(os.getenv('FORTEVISION_MODEL', str(ROOT/'models/anchored_v3.joblib'))).resolve())
     weights: Path = field(default_factory=lambda: Path(os.getenv('FORTEVISION_WEIGHTS', str(ROOT/'models/resnet18-f37072fd.pth'))).resolve())
     backend: str = field(default_factory=lambda: os.getenv('FORTEVISION_BACKEND', 'classifier'))
     device: str = field(default_factory=lambda: os.getenv('FORTEVISION_DEVICE', 'cpu'))
