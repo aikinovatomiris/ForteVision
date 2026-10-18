@@ -1,0 +1,51 @@
+[
+  {
+    "id": "231_current",
+    "url": "https://old.adilet.zan.kz/rus/docs/V1900019680",
+    "attempted_on": "2026-10-18",
+    "status": "failed",
+    "error": "The read operation timed out"
+  },
+  {
+    "id": "231_history",
+    "url": "https://old.adilet.zan.kz/rus/docs/V1900019680/history",
+    "attempted_on": "2026-10-18",
+    "status": "failed",
+    "error": "The read operation timed out"
+  },
+  {
+    "id": "14_current",
+    "url": "https://old.adilet.zan.kz/rus/docs/V2000020075",
+    "attempted_on": "2026-10-18",
+    "status": "failed",
+    "error": "The read operation timed out"
+  },
+  {
+    "id": "14_history",
+    "url": "https://old.adilet.zan.kz/rus/docs/V2000020075/history",
+    "attempted_on": "2026-10-18",
+    "status": "failed",
+    "error": "The read operation timed out"
+  },
+  {
+    "id": "14_info",
+    "url": "https://old.adilet.zan.kz/rus/docs/V2000020075/info",
+    "attempted_on": "2026-10-18",
+    "status": "failed",
+    "error": "The read operation timed out"
+  },
+  {
+    "id": "88_current",
+    "url": "https://old.adilet.zan.kz/rus/docs/V2400035552",
+    "attempted_on": "2026-10-18",
+    "status": "failed",
+    "error": "The read operation timed out"
+  },
+  {
+    "id": "88_info",
+    "url": "https://old.adilet.zan.kz/rus/docs/V2400035552/info",
+    "attempted_on": "2026-10-18",
+    "status": "failed",
+    "error": "The read operation timed out"
+  }
+]

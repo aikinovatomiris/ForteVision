@@ -1,0 +1,1064 @@
+{
+  "schema_version": "2.0.0",
+  "as_of": "2026-10-18",
+  "mappings": [
+    {
+      "ml_event_type": "cashier_left_active_service",
+      "rule_id": "R01",
+      "legal_reference_ids": [
+        "S1:rules:22"
+      ],
+      "ui_explanation_id": "R01",
+      "mandatory_features": [
+        "episode_continuous",
+        "critical_zones_visible",
+        "tracked_subject_consistent",
+        "operation_context_confirmed",
+        "service_started",
+        "service_active_at_exit",
+        "workstation_exit"
+      ],
+      "suppressors": [
+        "occlusion_or_offscreen",
+        "clipped_required_context",
+        "applicable_exception",
+        "plausible_alternative_unresolved",
+        "service_already_completed"
+      ],
+      "allowed_unknowns": [
+        "Причина ухода",
+        "Внутреннее распределение обязанностей"
+      ],
+      "unknown_note": "Неизвестность допустима только для перечисленных ограничений, если она не подрывает обязательный предикат; иначе uncertain.",
+      "never_issue_when": [
+        "rule_disabled",
+        "unknown_required_feature",
+        "unknown_suppressor",
+        "missing_real_evidence",
+        "invalid_timecode",
+        "insufficient_temporal_coverage"
+      ],
+      "implementation_status": "adapter_exists_requires_revalidation",
+      "legacy_binding_hash": null,
+      "required_rule_version": "2.0.0",
+      "required_binding_hash": "9ec2d663845605aa1a376b1928a9de2f967caa6d92d0e42f4ed54cc6aa151ac3",
+      "required_variant_fields": []
+    },
+    {
+      "ml_event_type": "prior_deposit_outside_storage",
+      "rule_id": "R02",
+      "legal_reference_ids": [
+        "S1:rules:20"
+      ],
+      "ui_explanation_id": "R02",
+      "mandatory_features": [
+        "episode_continuous",
+        "critical_zones_visible",
+        "tracked_subject_consistent",
+        "operation_context_confirmed",
+        "prior_batch_accepted",
+        "prior_service_completed",
+        "new_service_started",
+        "same_prior_batch_on_table"
+      ],
+      "suppressors": [
+        "occlusion_or_offscreen",
+        "clipped_required_context",
+        "applicable_exception",
+        "plausible_alternative_unresolved"
+      ],
+      "allowed_unknowns": [
+        "Сумма и собственник каждой купюры",
+        "Скрытые учётные записи"
+      ],
+      "unknown_note": "Неизвестность допустима только для перечисленных ограничений, если она не подрывает обязательный предикат; иначе uncertain.",
+      "never_issue_when": [
+        "rule_disabled",
+        "unknown_required_feature",
+        "unknown_suppressor",
+        "missing_real_evidence",
+        "invalid_timecode",
+        "insufficient_temporal_coverage"
+      ],
+      "implementation_status": "adapter_exists_requires_revalidation",
+      "legacy_binding_hash": null,
+      "required_rule_version": "2.0.0",
+      "required_binding_hash": "a17128d9c69aaef81880d36bbc09928026fb7c65ef02f9158f5714efcebeb55e",
+      "required_variant_fields": []
+    },
+    {
+      "ml_event_type": "deposit_count_without_customer",
+      "rule_id": "R03",
+      "legal_reference_ids": [
+        "S1:rules:20"
+      ],
+      "ui_explanation_id": "R03",
+      "mandatory_features": [
+        "episode_continuous",
+        "critical_zones_visible",
+        "tracked_subject_consistent",
+        "operation_context_confirmed",
+        "customer_receipt",
+        "primary_count",
+        "customer_absent_during_count"
+      ],
+      "suppressors": [
+        "occlusion_or_offscreen",
+        "clipped_required_context",
+        "applicable_exception",
+        "plausible_alternative_unresolved"
+      ],
+      "allowed_unknowns": [
+        "Причина перемещения клиента",
+        "Невидимые части помещения"
+      ],
+      "unknown_note": "Неизвестность допустима только для перечисленных ограничений, если она не подрывает обязательный предикат; иначе uncertain.",
+      "never_issue_when": [
+        "rule_disabled",
+        "unknown_required_feature",
+        "unknown_suppressor",
+        "missing_real_evidence",
+        "invalid_timecode",
+        "insufficient_temporal_coverage"
+      ],
+      "implementation_status": "adapter_exists_requires_revalidation",
+      "legacy_binding_hash": null,
+      "required_rule_version": "2.0.0",
+      "required_binding_hash": "0e6750e301d4b4890d7845b9820b43f6758c957955f4e83db6ffde728be7871c",
+      "required_variant_fields": []
+    },
+    {
+      "ml_event_type": "deposit_stored_without_observed_count",
+      "rule_id": "R04",
+      "legal_reference_ids": [
+        "S1:rules:19",
+        "S1:rules:20"
+      ],
+      "ui_explanation_id": "R04",
+      "mandatory_features": [
+        "episode_continuous",
+        "critical_zones_visible",
+        "tracked_subject_consistent",
+        "operation_context_confirmed",
+        "customer_receipt",
+        "deposit_cycle_complete",
+        "count_absent_complete_coverage",
+        "integrated_count_excluded"
+      ],
+      "suppressors": [
+        "occlusion_or_offscreen",
+        "clipped_required_context",
+        "applicable_exception",
+        "plausible_alternative_unresolved",
+        "count_may_be_unobserved"
+      ],
+      "allowed_unknowns": [
+        "Встроенные функции неизвестного оборудования",
+        "Участки вне обзора"
+      ],
+      "unknown_note": "Неизвестность допустима только для перечисленных ограничений, если она не подрывает обязательный предикат; иначе uncertain.",
+      "never_issue_when": [
+        "rule_disabled",
+        "unknown_required_feature",
+        "unknown_suppressor",
+        "missing_real_evidence",
+        "invalid_timecode",
+        "insufficient_temporal_coverage"
+      ],
+      "implementation_status": "adapter_exists_requires_revalidation",
+      "legacy_binding_hash": null,
+      "required_rule_version": "2.0.0",
+      "required_binding_hash": "4bb589bc31307774ab2ef054afa3f4d16670c512139c3921440963758c113a64",
+      "required_variant_fields": []
+    },
+    {
+      "ml_event_type": "damaged_collection_bag_without_observed_joint_recount",
+      "rule_id": "R05",
+      "legal_reference_ids": [
+        "S1:rules:24",
+        "S1:rules:25"
+      ],
+      "ui_explanation_id": "R05",
+      "mandatory_features": [
+        "episode_continuous",
+        "critical_zones_visible",
+        "tracked_subject_consistent",
+        "operation_context_confirmed",
+        "incoming_collection",
+        "actual_integrity_breach",
+        "defect_shown_to_cashier",
+        "receipt_complete_collector_left",
+        "joint_recount_absent_complete_coverage"
+      ],
+      "suppressors": [
+        "occlusion_or_offscreen",
+        "clipped_required_context",
+        "applicable_exception",
+        "plausible_alternative_unresolved",
+        "damage_detection_not_supported"
+      ],
+      "allowed_unknowns": [
+        "Фактическое восприятие дефекта кассиром",
+        "Полномочия и невидимые этапы"
+      ],
+      "unknown_note": "Неизвестность допустима только для перечисленных ограничений, если она не подрывает обязательный предикат; иначе uncertain.",
+      "never_issue_when": [
+        "rule_disabled",
+        "unknown_required_feature",
+        "unknown_suppressor",
+        "missing_real_evidence",
+        "invalid_timecode",
+        "insufficient_temporal_coverage"
+      ],
+      "implementation_status": "adapter_exists_requires_revalidation",
+      "legacy_binding_hash": null,
+      "required_rule_version": "2.0.0",
+      "required_binding_hash": "b699d7cc6415f581a8b010a5c87cfc8e9a2bc88636ebb9b4ca4a4ebfecfb7b6d",
+      "required_variant_fields": []
+    },
+    {
+      "ml_event_type": "object_stored_in_cash_unit",
+      "rule_id": "R06",
+      "legal_reference_ids": [
+        "S1:rules:12"
+      ],
+      "ui_explanation_id": "R06",
+      "mandatory_features": [],
+      "suppressors": [
+        "occlusion_or_offscreen",
+        "clipped_required_context",
+        "applicable_exception",
+        "plausible_alternative_unresolved"
+      ],
+      "allowed_unknowns": [
+        "Принадлежность и служебное назначение по внешнему виду не устанавливаются. Смартфон не означает автоматически личную вещь; тип устройства и наличие камеры могут быть неразличимы."
+      ],
+      "unknown_note": "Неизвестность допустима только для перечисленных ограничений, если она не подрывает обязательный предикат; иначе uncertain.",
+      "never_issue_when": [
+        "rule_disabled",
+        "unknown_required_feature",
+        "unknown_suppressor",
+        "missing_real_evidence",
+        "invalid_timecode",
+        "insufficient_temporal_coverage",
+        "not_an_independent_visual_rule"
+      ],
+      "implementation_status": "excluded_from_automatic_verdict",
+      "legacy_binding_hash": null,
+      "required_rule_version": "2.0.0",
+      "required_binding_hash": "189cbadbe5308618f244c295e899a4346c77ff725adbd607c8be50e5b0d5fb92",
+      "required_variant_fields": []
+    },
+    {
+      "ml_event_type": "incomplete_bundle_payout_without_leaf_count",
+      "rule_id": "R07",
+      "legal_reference_ids": [
+        "S1:rules:31",
+        "S1:rules:32"
+      ],
+      "ui_explanation_id": "R07",
+      "mandatory_features": [
+        "episode_continuous",
+        "critical_zones_visible",
+        "tracked_subject_consistent",
+        "operation_context_confirmed",
+        "customer_payout",
+        "bundle_exception_identified",
+        "payout_cycle_complete",
+        "leaf_count_absent_complete_coverage"
+      ],
+      "suppressors": [
+        "occlusion_or_offscreen",
+        "clipped_required_context",
+        "applicable_exception",
+        "plausible_alternative_unresolved",
+        "count_may_be_unobserved"
+      ],
+      "allowed_unknowns": [
+        "Нечитаемые реквизиты упаковки",
+        "Количество скрытых листов"
+      ],
+      "unknown_note": "Неизвестность допустима только для перечисленных ограничений, если она не подрывает обязательный предикат; иначе uncertain.",
+      "never_issue_when": [
+        "rule_disabled",
+        "unknown_required_feature",
+        "unknown_suppressor",
+        "missing_real_evidence",
+        "invalid_timecode",
+        "insufficient_temporal_coverage"
+      ],
+      "implementation_status": "not_implemented",
+      "legacy_binding_hash": null,
+      "required_rule_version": "2.0.0",
+      "required_binding_hash": "9bba3ac6cbee17a2932ce83006018ef68f199d0f2a3f4539c96e2d26d36ed07a",
+      "required_variant_fields": []
+    },
+    {
+      "ml_event_type": "internal_processing_without_visible_controller",
+      "rule_id": "R08",
+      "legal_reference_ids": [
+        "S1:rules:42"
+      ],
+      "ui_explanation_id": "R08",
+      "mandatory_features": [
+        "episode_continuous",
+        "critical_zones_visible",
+        "tracked_subject_consistent",
+        "operation_context_confirmed",
+        "internal_cash_processing",
+        "processing_active",
+        "whole_presence_zone_visible",
+        "no_second_worker"
+      ],
+      "suppressors": [
+        "occlusion_or_offscreen",
+        "clipped_required_context",
+        "applicable_exception",
+        "plausible_alternative_unresolved"
+      ],
+      "allowed_unknowns": [
+        "Официальная роль присутствующего лица",
+        "Участники вне доступной зоны"
+      ],
+      "unknown_note": "Неизвестность допустима только для перечисленных ограничений, если она не подрывает обязательный предикат; иначе uncertain.",
+      "never_issue_when": [
+        "rule_disabled",
+        "unknown_required_feature",
+        "unknown_suppressor",
+        "missing_real_evidence",
+        "invalid_timecode",
+        "insufficient_temporal_coverage"
+      ],
+      "implementation_status": "not_implemented",
+      "legacy_binding_hash": null,
+      "required_rule_version": "2.0.0",
+      "required_binding_hash": "c2b050496d52fe5cbc9b60b74fada6fe65bca8c747293f5b677f0560aed4e0ef",
+      "required_variant_fields": []
+    },
+    {
+      "ml_event_type": "collection_handover_without_transport_container",
+      "rule_id": "R09",
+      "legal_reference_ids": [
+        "S1:rules:2",
+        "S1:rules:105"
+      ],
+      "ui_explanation_id": "R09",
+      "mandatory_features": [
+        "episode_continuous",
+        "critical_zones_visible",
+        "tracked_subject_consistent",
+        "operation_context_confirmed",
+        "collection_transfer_context",
+        "final_transfer",
+        "loose_cash_transferred",
+        "allowed_container_excluded"
+      ],
+      "suppressors": [
+        "occlusion_or_offscreen",
+        "clipped_required_context",
+        "applicable_exception",
+        "plausible_alternative_unresolved"
+      ],
+      "allowed_unknowns": [
+        "Договор и полномочия участников",
+        "Документирование может быть цифровым"
+      ],
+      "unknown_note": "Неизвестность допустима только для перечисленных ограничений, если она не подрывает обязательный предикат; иначе uncertain.",
+      "never_issue_when": [
+        "rule_disabled",
+        "unknown_required_feature",
+        "unknown_suppressor",
+        "missing_real_evidence",
+        "invalid_timecode",
+        "insufficient_temporal_coverage"
+      ],
+      "implementation_status": "not_implemented",
+      "legacy_binding_hash": null,
+      "required_rule_version": "2.0.0",
+      "required_binding_hash": "a1ab3355b762819ee58ef7a2d69cbedb5b12c63435bb141d5b6b5a0a9db3f97d",
+      "required_variant_fields": []
+    },
+    {
+      "ml_event_type": "cash_cassette_finalized_with_visible_closure_defect",
+      "rule_id": "R10",
+      "legal_reference_ids": [
+        "S1:rules:55"
+      ],
+      "ui_explanation_id": "R10",
+      "mandatory_features": [
+        "episode_continuous",
+        "critical_zones_visible",
+        "tracked_subject_consistent",
+        "operation_context_confirmed",
+        "atm_cassette",
+        "loaded_and_finalized",
+        "positive_closure_defect"
+      ],
+      "suppressors": [
+        "occlusion_or_offscreen",
+        "clipped_required_context",
+        "applicable_exception",
+        "plausible_alternative_unresolved"
+      ],
+      "allowed_unknowns": [
+        "Фактическое запирание скрытого замка",
+        "Внутренние особенности модели кассеты"
+      ],
+      "unknown_note": "Неизвестность допустима только для перечисленных ограничений, если она не подрывает обязательный предикат; иначе uncertain.",
+      "never_issue_when": [
+        "rule_disabled",
+        "unknown_required_feature",
+        "unknown_suppressor",
+        "missing_real_evidence",
+        "invalid_timecode",
+        "insufficient_temporal_coverage"
+      ],
+      "implementation_status": "not_implemented",
+      "legacy_binding_hash": null,
+      "required_rule_version": "2.0.0",
+      "required_binding_hash": "61a39fabb74f3df48db9936f9a64f47682378d7e4697ef12b61da238054fd352",
+      "required_variant_fields": [
+        "defect_kind"
+      ]
+    },
+    {
+      "ml_event_type": "damaged_package_accepted_for_transport",
+      "rule_id": "R11",
+      "legal_reference_ids": [
+        "S1:rules:110",
+        "S1:rules:112"
+      ],
+      "ui_explanation_id": "R11",
+      "mandatory_features": [],
+      "suppressors": [
+        "occlusion_or_offscreen",
+        "clipped_required_context",
+        "applicable_exception",
+        "plausible_alternative_unresolved"
+      ],
+      "allowed_unknowns": [
+        "Направление перевозки и обнаружение дефекта участниками по кассовой камере обычно неизвестны. Не подменять этим правилом любой приём сумки по п. 25."
+      ],
+      "unknown_note": "Неизвестность допустима только для перечисленных ограничений, если она не подрывает обязательный предикат; иначе uncertain.",
+      "never_issue_when": [
+        "rule_disabled",
+        "unknown_required_feature",
+        "unknown_suppressor",
+        "missing_real_evidence",
+        "invalid_timecode",
+        "insufficient_temporal_coverage",
+        "not_an_independent_visual_rule"
+      ],
+      "implementation_status": "excluded_from_automatic_verdict",
+      "legacy_binding_hash": null,
+      "required_rule_version": "2.0.0",
+      "required_binding_hash": "68b08dc3dac87228c4a2ba99100b31e3dd4a5d0f350bd49c19529ad9fcd62ff1",
+      "required_variant_fields": []
+    },
+    {
+      "ml_event_type": "transport_bag_packaging_context",
+      "rule_id": "R12",
+      "legal_reference_ids": [
+        "S1:rules:110",
+        "S1:rules:113"
+      ],
+      "ui_explanation_id": "R12",
+      "mandatory_features": [],
+      "suppressors": [
+        "occlusion_or_offscreen",
+        "clipped_required_context",
+        "applicable_exception",
+        "plausible_alternative_unresolved"
+      ],
+      "allowed_unknowns": [
+        "Условия межтерриториальной перевозки и полномочия клиента скрыты; маркировка и подписи сверху обычно не читаются."
+      ],
+      "unknown_note": "Неизвестность допустима только для перечисленных ограничений, если она не подрывает обязательный предикат; иначе uncertain.",
+      "never_issue_when": [
+        "rule_disabled",
+        "unknown_required_feature",
+        "unknown_suppressor",
+        "missing_real_evidence",
+        "invalid_timecode",
+        "insufficient_temporal_coverage",
+        "not_an_independent_visual_rule"
+      ],
+      "implementation_status": "excluded_from_automatic_verdict",
+      "legacy_binding_hash": null,
+      "required_rule_version": "2.0.0",
+      "required_binding_hash": "1fadd912e12a4d469a043ba4c112ac2579618fcd03570b417ac0f0023bc1b514",
+      "required_variant_fields": []
+    },
+    {
+      "ml_event_type": "vault_entry",
+      "rule_id": "R13",
+      "legal_reference_ids": [
+        "S1:rules:75"
+      ],
+      "ui_explanation_id": "R13",
+      "mandatory_features": [],
+      "suppressors": [
+        "occlusion_or_offscreen",
+        "clipped_required_context",
+        "applicable_exception",
+        "plausible_alternative_unresolved"
+      ],
+      "allowed_unknowns": [
+        "Один вошедший может сам быть ответственным. Ни форма, ни лицо, ни бейдж не доказывают полномочия."
+      ],
+      "unknown_note": "Неизвестность допустима только для перечисленных ограничений, если она не подрывает обязательный предикат; иначе uncertain.",
+      "never_issue_when": [
+        "rule_disabled",
+        "unknown_required_feature",
+        "unknown_suppressor",
+        "missing_real_evidence",
+        "invalid_timecode",
+        "insufficient_temporal_coverage",
+        "not_an_independent_visual_rule"
+      ],
+      "implementation_status": "excluded_from_automatic_verdict",
+      "legacy_binding_hash": null,
+      "required_rule_version": "2.0.0",
+      "required_binding_hash": "8afdeb61d4befe582d69dc26aad93a780bd9c67e0f3d23417612bb2b7ae20ffb",
+      "required_variant_fields": []
+    },
+    {
+      "ml_event_type": "cash_moved_to_other_location",
+      "rule_id": "R14",
+      "legal_reference_ids": [
+        "S1:rules:20",
+        "S1:rules:74",
+        "S1:rules:77"
+      ],
+      "ui_explanation_id": "R14",
+      "mandatory_features": [],
+      "suppressors": [
+        "occlusion_or_offscreen",
+        "clipped_required_context",
+        "applicable_exception",
+        "plausible_alternative_unresolved"
+      ],
+      "allowed_unknowns": [
+        "Карман/контейнер не доказывают присвоения; п. 74 требует учётного контекста. Для предыдущих принятых денег предпочтительнее более точное R02."
+      ],
+      "unknown_note": "Неизвестность допустима только для перечисленных ограничений, если она не подрывает обязательный предикат; иначе uncertain.",
+      "never_issue_when": [
+        "rule_disabled",
+        "unknown_required_feature",
+        "unknown_suppressor",
+        "missing_real_evidence",
+        "invalid_timecode",
+        "insufficient_temporal_coverage",
+        "not_an_independent_visual_rule"
+      ],
+      "implementation_status": "excluded_from_automatic_verdict",
+      "legacy_binding_hash": null,
+      "required_rule_version": "2.0.0",
+      "required_binding_hash": "be91147c2ba3f0edbe81fa84862274a7e4953025769c93f73d11c3d200fd9bb8",
+      "required_variant_fields": []
+    },
+    {
+      "ml_event_type": "cash_area_door_open",
+      "rule_id": "R15",
+      "legal_reference_ids": [
+        "S2:rules:8",
+        "S2:rules:16"
+      ],
+      "ui_explanation_id": "R15",
+      "mandatory_features": [],
+      "suppressors": [
+        "occlusion_or_offscreen",
+        "clipped_required_context",
+        "applicable_exception",
+        "plausible_alternative_unresolved"
+      ],
+      "allowed_unknowns": [
+        "Требование к конструкции двери не равно общему запрету любого открывания. Полномочия вошедшего и временный режим неизвестны."
+      ],
+      "unknown_note": "Неизвестность допустима только для перечисленных ограничений, если она не подрывает обязательный предикат; иначе uncertain.",
+      "never_issue_when": [
+        "rule_disabled",
+        "unknown_required_feature",
+        "unknown_suppressor",
+        "missing_real_evidence",
+        "invalid_timecode",
+        "insufficient_temporal_coverage",
+        "not_an_independent_visual_rule"
+      ],
+      "implementation_status": "excluded_from_automatic_verdict",
+      "legacy_binding_hash": null,
+      "required_rule_version": "2.0.0",
+      "required_binding_hash": "19b44f698f3dc546fedb85d9ddc80a9f0ae73b19659d8a8cd4da9378f531ad3a",
+      "required_variant_fields": []
+    },
+    {
+      "ml_event_type": "cash_transfer_outside_visible_tray",
+      "rule_id": "R16",
+      "legal_reference_ids": [
+        "S2:rules:16"
+      ],
+      "ui_explanation_id": "R16",
+      "mandatory_features": [],
+      "suppressors": [
+        "occlusion_or_offscreen",
+        "clipped_required_context",
+        "applicable_exception",
+        "plausible_alternative_unresolved"
+      ],
+      "allowed_unknowns": [
+        "Это прежде всего требование к оборудованию. Прямой универсальный запрет каждого иного движения денег из этого пункта не следует."
+      ],
+      "unknown_note": "Неизвестность допустима только для перечисленных ограничений, если она не подрывает обязательный предикат; иначе uncertain.",
+      "never_issue_when": [
+        "rule_disabled",
+        "unknown_required_feature",
+        "unknown_suppressor",
+        "missing_real_evidence",
+        "invalid_timecode",
+        "insufficient_temporal_coverage",
+        "not_an_independent_visual_rule"
+      ],
+      "implementation_status": "excluded_from_automatic_verdict",
+      "legacy_binding_hash": null,
+      "required_rule_version": "2.0.0",
+      "required_binding_hash": "615a373b1e4e78be83058cecced1c18a74d14b840b21e02ea817ccf6261ec9ea",
+      "required_variant_fields": []
+    },
+    {
+      "ml_event_type": "bank_cash_package_finalized_with_visible_defect",
+      "rule_id": "R17",
+      "legal_reference_ids": [
+        "S1:rules:46",
+        "S1:rules:47",
+        "S1:rules:48",
+        "S1:rules:49",
+        "S1:rules:50",
+        "S1:rules:51",
+        "S1:rules:52",
+        "S1:rules:53",
+        "S1:rules:53-1"
+      ],
+      "ui_explanation_id": "R17",
+      "mandatory_features": [
+        "episode_continuous",
+        "critical_zones_visible",
+        "tracked_subject_consistent",
+        "operation_context_confirmed",
+        "package_variant_known",
+        "package_finalized",
+        "positive_required_closure_defect",
+        "allowed_alternative_excluded"
+      ],
+      "suppressors": [
+        "occlusion_or_offscreen",
+        "clipped_required_context",
+        "applicable_exception",
+        "plausible_alternative_unresolved"
+      ],
+      "allowed_unknowns": [
+        "Количество банкнот/монет",
+        "Реквизиты и подлинность маркировки"
+      ],
+      "unknown_note": "Неизвестность допустима только для перечисленных ограничений, если она не подрывает обязательный предикат; иначе uncertain.",
+      "never_issue_when": [
+        "rule_disabled",
+        "unknown_required_feature",
+        "unknown_suppressor",
+        "missing_real_evidence",
+        "invalid_timecode",
+        "insufficient_temporal_coverage"
+      ],
+      "implementation_status": "not_implemented",
+      "legacy_binding_hash": null,
+      "required_rule_version": "2.0.0",
+      "required_binding_hash": "cb04f9c63932d702de38271899f828b9afd4a6c0653a2b280bdd238884579898",
+      "required_variant_fields": [
+        "package_variant"
+      ]
+    },
+    {
+      "ml_event_type": "bag_inspection_not_observed",
+      "rule_id": "R18",
+      "legal_reference_ids": [
+        "S1:rules:24",
+        "S1:rules:107"
+      ],
+      "ui_explanation_id": "R18",
+      "mandatory_features": [],
+      "suppressors": [
+        "occlusion_or_offscreen",
+        "clipped_required_context",
+        "applicable_exception",
+        "plausible_alternative_unresolved"
+      ],
+      "allowed_unknowns": [
+        "Осмотр бывает коротким и без отдельного жеста. По видео нельзя установить направление внимания и факт визуальной проверки."
+      ],
+      "unknown_note": "Неизвестность допустима только для перечисленных ограничений, если она не подрывает обязательный предикат; иначе uncertain.",
+      "never_issue_when": [
+        "rule_disabled",
+        "unknown_required_feature",
+        "unknown_suppressor",
+        "missing_real_evidence",
+        "invalid_timecode",
+        "insufficient_temporal_coverage",
+        "not_an_independent_visual_rule"
+      ],
+      "implementation_status": "excluded_from_automatic_verdict",
+      "legacy_binding_hash": null,
+      "required_rule_version": "2.0.0",
+      "required_binding_hash": "7937b8f86461b8ece2e9861d1258e9953f710b982cfd208c1578936bf44110e3",
+      "required_variant_fields": []
+    },
+    {
+      "ml_event_type": "cash_transfer_between_workers",
+      "rule_id": "R19",
+      "legal_reference_ids": [
+        "S1:rules:15",
+        "S1:rules:10-1"
+      ],
+      "ui_explanation_id": "R19",
+      "mandatory_features": [],
+      "suppressors": [
+        "occlusion_or_offscreen",
+        "clipped_required_context",
+        "applicable_exception",
+        "plausible_alternative_unresolved"
+      ],
+      "allowed_unknowns": [
+        "Документ может быть цифровым; роли и подписи неизвестны. Отсутствие бумаги не доказывает отсутствие учёта."
+      ],
+      "unknown_note": "Неизвестность допустима только для перечисленных ограничений, если она не подрывает обязательный предикат; иначе uncertain.",
+      "never_issue_when": [
+        "rule_disabled",
+        "unknown_required_feature",
+        "unknown_suppressor",
+        "missing_real_evidence",
+        "invalid_timecode",
+        "insufficient_temporal_coverage",
+        "not_an_independent_visual_rule"
+      ],
+      "implementation_status": "excluded_from_automatic_verdict",
+      "legacy_binding_hash": null,
+      "required_rule_version": "2.0.0",
+      "required_binding_hash": "ef5c26094a86035cb3c3f68741a57170f4967c48ff42b78b1d17a72806bcc841",
+      "required_variant_fields": []
+    },
+    {
+      "ml_event_type": "cash_handover_without_visible_paper",
+      "rule_id": "R20",
+      "legal_reference_ids": [
+        "S1:rules:19",
+        "S1:rules:31",
+        "S1:rules:10-1"
+      ],
+      "ui_explanation_id": "R20",
+      "mandatory_features": [],
+      "suppressors": [
+        "occlusion_or_offscreen",
+        "clipped_required_context",
+        "applicable_exception",
+        "plausible_alternative_unresolved"
+      ],
+      "allowed_unknowns": [
+        "Цифровой документ, системная идентификация и экран недоступны; распознавание/идентификация лиц запрещены кейсом."
+      ],
+      "unknown_note": "Неизвестность допустима только для перечисленных ограничений, если она не подрывает обязательный предикат; иначе uncertain.",
+      "never_issue_when": [
+        "rule_disabled",
+        "unknown_required_feature",
+        "unknown_suppressor",
+        "missing_real_evidence",
+        "invalid_timecode",
+        "insufficient_temporal_coverage",
+        "not_an_independent_visual_rule"
+      ],
+      "implementation_status": "excluded_from_automatic_verdict",
+      "legacy_binding_hash": null,
+      "required_rule_version": "2.0.0",
+      "required_binding_hash": "6851ec0371eb08d4e3c6bf42308a1e212c9fca29e74f68e1d1cbb34064e56604",
+      "required_variant_fields": []
+    },
+    {
+      "ml_event_type": "cash_processing_method_unknown",
+      "rule_id": "R21",
+      "legal_reference_ids": [
+        "S1:rules:9",
+        "S1:rules:19",
+        "S1:rules:41",
+        "S1:rules:57",
+        "S1:rules:58"
+      ],
+      "ui_explanation_id": "R21",
+      "mandatory_features": [],
+      "suppressors": [
+        "occlusion_or_offscreen",
+        "clipped_required_context",
+        "applicable_exception",
+        "plausible_alternative_unresolved"
+      ],
+      "allowed_unknowns": [
+        "Счётчик может иметь встроенные функции; устройство может быть вне кадра. Подлинность, машинные признаки и корректность настройки по общему плану не проверяются."
+      ],
+      "unknown_note": "Неизвестность допустима только для перечисленных ограничений, если она не подрывает обязательный предикат; иначе uncertain.",
+      "never_issue_when": [
+        "rule_disabled",
+        "unknown_required_feature",
+        "unknown_suppressor",
+        "missing_real_evidence",
+        "invalid_timecode",
+        "insufficient_temporal_coverage",
+        "not_an_independent_visual_rule"
+      ],
+      "implementation_status": "excluded_from_automatic_verdict",
+      "legacy_binding_hash": null,
+      "required_rule_version": "2.0.0",
+      "required_binding_hash": "d7e8eaebbca24be0e9c3be4b84936fe9b56126f47ef5cb52eb382e8f0a2533ef",
+      "required_variant_fields": []
+    },
+    {
+      "ml_event_type": "collection_crew_partially_visible",
+      "rule_id": "R22",
+      "legal_reference_ids": [
+        "S1:rules:98",
+        "S1:rules:99",
+        "S1:rules:103",
+        "S1:rules:109-6",
+        "S1:rules:117",
+        "S1:rules:127"
+      ],
+      "ui_explanation_id": "R22",
+      "mandatory_features": [],
+      "suppressors": [
+        "occlusion_or_offscreen",
+        "clipped_required_context",
+        "applicable_exception",
+        "plausible_alternative_unresolved"
+      ],
+      "allowed_unknowns": [
+        "Водитель и другие участники могут быть вне кассы; п. 99 допускает два человека при условиях. Обеспечение СИЗ не тождественно доказанному обязательному ношению в каждом кадре."
+      ],
+      "unknown_note": "Неизвестность допустима только для перечисленных ограничений, если она не подрывает обязательный предикат; иначе uncertain.",
+      "never_issue_when": [
+        "rule_disabled",
+        "unknown_required_feature",
+        "unknown_suppressor",
+        "missing_real_evidence",
+        "invalid_timecode",
+        "insufficient_temporal_coverage",
+        "not_an_independent_visual_rule"
+      ],
+      "implementation_status": "excluded_from_automatic_verdict",
+      "legacy_binding_hash": null,
+      "required_rule_version": "2.0.0",
+      "required_binding_hash": "46866b6818e1fe9d7adf75c03abd537cc9c46e8fc042a55b0ed320cbea618be0",
+      "required_variant_fields": []
+    },
+    {
+      "ml_event_type": "person_in_loading_area",
+      "rule_id": "R23",
+      "legal_reference_ids": [
+        "S2:rules:21"
+      ],
+      "ui_explanation_id": "R23",
+      "mandatory_features": [],
+      "suppressors": [
+        "occlusion_or_offscreen",
+        "clipped_required_context",
+        "applicable_exception",
+        "plausible_alternative_unresolved"
+      ],
+      "allowed_unknowns": [
+        "Статус третьего лица неизвестен; камера одной кассы обычно не охватывает погрузку."
+      ],
+      "unknown_note": "Неизвестность допустима только для перечисленных ограничений, если она не подрывает обязательный предикат; иначе uncertain.",
+      "never_issue_when": [
+        "rule_disabled",
+        "unknown_required_feature",
+        "unknown_suppressor",
+        "missing_real_evidence",
+        "invalid_timecode",
+        "insufficient_temporal_coverage",
+        "not_an_independent_visual_rule"
+      ],
+      "implementation_status": "excluded_from_automatic_verdict",
+      "legacy_binding_hash": null,
+      "required_rule_version": "2.0.0",
+      "required_binding_hash": "1c8965034984887e15650012949ddf1a16718accddbfc60fbe7a209b218acec2",
+      "required_variant_fields": []
+    },
+    {
+      "ml_event_type": "customer_left_after_payout",
+      "rule_id": "R24",
+      "legal_reference_ids": [
+        "S1:rules:35"
+      ],
+      "ui_explanation_id": "R24",
+      "mandatory_features": [],
+      "suppressors": [
+        "occlusion_or_offscreen",
+        "clipped_required_context",
+        "applicable_exception",
+        "plausible_alternative_unresolved"
+      ],
+      "allowed_unknowns": [
+        "Клиент мог пойти в отдельное помещение пересчёта. Норма не даёт оснований автоматически обвинять кассира или удерживать клиента."
+      ],
+      "unknown_note": "Неизвестность допустима только для перечисленных ограничений, если она не подрывает обязательный предикат; иначе uncertain.",
+      "never_issue_when": [
+        "rule_disabled",
+        "unknown_required_feature",
+        "unknown_suppressor",
+        "missing_real_evidence",
+        "invalid_timecode",
+        "insufficient_temporal_coverage",
+        "not_an_independent_visual_rule"
+      ],
+      "implementation_status": "excluded_from_automatic_verdict",
+      "legacy_binding_hash": null,
+      "required_rule_version": "2.0.0",
+      "required_binding_hash": "b311415e5a033d72583bffd7cf2533ce75b7fb389060fbceb46f0fdabaab94d0",
+      "required_variant_fields": []
+    },
+    {
+      "ml_event_type": "payout_count_without_customer",
+      "rule_id": "R25",
+      "legal_reference_ids": [
+        "S1:rules:31",
+        "S1:rules:32"
+      ],
+      "ui_explanation_id": "R25",
+      "mandatory_features": [
+        "episode_continuous",
+        "critical_zones_visible",
+        "tracked_subject_consistent",
+        "operation_context_confirmed",
+        "customer_payout_context",
+        "payout_stage_count",
+        "customer_absent_during_payout_count"
+      ],
+      "suppressors": [
+        "occlusion_or_offscreen",
+        "clipped_required_context",
+        "applicable_exception",
+        "plausible_alternative_unresolved"
+      ],
+      "allowed_unknowns": [
+        "Невидимое присутствие клиента",
+        "Предварительный внутренний процесс"
+      ],
+      "unknown_note": "Неизвестность допустима только для перечисленных ограничений, если она не подрывает обязательный предикат; иначе uncertain.",
+      "never_issue_when": [
+        "rule_disabled",
+        "unknown_required_feature",
+        "unknown_suppressor",
+        "missing_real_evidence",
+        "invalid_timecode",
+        "insufficient_temporal_coverage"
+      ],
+      "implementation_status": "not_implemented",
+      "legacy_binding_hash": null,
+      "required_rule_version": "2.0.0",
+      "required_binding_hash": "07b76524b4142f5aa54b90da8c368f1c8bf8311e567998448282bfd5190700f4",
+      "required_variant_fields": []
+    },
+    {
+      "ml_event_type": "merged_banknotes_without_observed_leaf_count",
+      "rule_id": "R26",
+      "legal_reference_ids": [
+        "S1:rules:49"
+      ],
+      "ui_explanation_id": "R26",
+      "mandatory_features": [
+        "episode_continuous",
+        "critical_zones_visible",
+        "tracked_subject_consistent",
+        "operation_context_confirmed",
+        "received_for_consolidation",
+        "same_notes_consolidated",
+        "consolidation_finalized",
+        "leaf_count_absent_complete_coverage"
+      ],
+      "suppressors": [
+        "occlusion_or_offscreen",
+        "clipped_required_context",
+        "applicable_exception",
+        "plausible_alternative_unresolved",
+        "count_may_be_unobserved"
+      ],
+      "allowed_unknowns": [
+        "Назначение передачи при неоднозначном процессе",
+        "Пересчёт до начала фрагмента"
+      ],
+      "unknown_note": "Неизвестность допустима только для перечисленных ограничений, если она не подрывает обязательный предикат; иначе uncertain.",
+      "never_issue_when": [
+        "rule_disabled",
+        "unknown_required_feature",
+        "unknown_suppressor",
+        "missing_real_evidence",
+        "invalid_timecode",
+        "insufficient_temporal_coverage"
+      ],
+      "implementation_status": "not_implemented",
+      "legacy_binding_hash": null,
+      "required_rule_version": "2.0.0",
+      "required_binding_hash": "e8d15d9392dd780c1d0bc1e08afca8132c8728bce5af07790f8fc449891e2997",
+      "required_variant_fields": []
+    }
+  ],
+  "input_contract": {
+    "event_type": "строка из mappings; неизвестное значение остаётся нейтральным",
+    "timecode_sec": "Конечное число >=0, <= duration_sec; секунды от первого кадра исходного видео",
+    "duration_sec": "Положительная длительность исходного видео",
+    "rule_version": "2.0.0",
+    "predicates": "Объект: predicate_id -> true|false|null; пропущенное равно unknown",
+    "predicate_evidence": "Для каждого использованного предиката локальные segment_id/frame_id; не облачный текст и не вымышленный идентификатор",
+    "timeline": "before_sec <= event_sec == timecode_sec <= after_sec <= duration_sec",
+    "coverage": "Непрерывный локально проанализированный интервал, покрывающий весь критический цикл; для отсутствующего действия выборки кадров недостаточно",
+    "evidence_frame_refs": "1–3 существующих локальных кадра; JPEG base64 формирует сервер после проверки принадлежности ролику",
+    "source_media_id": "Локальный непрозрачный ID; без пути, лица, ФИО и счёта в публичном ответе",
+    "package_variant": "Обязателен для R17; одно из package_variants",
+    "defect_kind": "Обязателен для R10: open_lid | broken_seal; формулировка выбирается из закрытого словаря.",
+    "model_build_id": "Версия локального набора весов и конфигурации, установленная доверенным ML-адаптером сервера; обязана совпадать с реестром допуска."
+  },
+  "release_contract": {
+    "enabled_for_detection": false,
+    "local_ml_validation_required": true,
+    "must_match": [
+      "rule_id",
+      "rule_version",
+      "binding_hash",
+      "knowledge_base_sha256",
+      "model_build_id"
+    ],
+    "validation_artifact": "Локальный отчёт с разметкой категорий, precision/recall, FP, ошибкой таймкода и результатами по ракурсам; синтетические unit-тесты этого не заменяют.",
+    "registry_origin": "Только доверенная серверная конфигурация. Не принимать реестр допуска из ответа модели или API-запроса.",
+    "knowledge_base_sha256": "SHA-256 canonical JSON всего каталога: ensure_ascii=False, sort_keys=True, separators=(\",\", \":\"). См. explain_local.knowledge_hash."
+  },
+  "evaluation_order": [
+    "schema_and_timing_validation",
+    "rule_lookup",
+    "legal_status_and_scope_gate",
+    "enabled_and_release_validation_gate",
+    "all_required_predicates_true",
+    "all_suppressors_explicitly_false",
+    "local_evidence_and_coverage_check",
+    "deduplicate_same_rule_same_episode",
+    "render_fixed_template",
+    "serialize_official_violation_fields"
+  ],
+  "public_api_policy": {
+    "unchanged": true,
+    "uncertain": "Не добавлять в violations; объяснять недостаточность внутри UI. Не превращать в третий verdict.",
+    "no_violation": "Только результат успешно выполненного валидированного анализа без прошедших правила событий; не сертификат законности. При отсутствии активных детекторов/сбое сервис должен сообщать ошибку или неготовность в предусмотренной оболочке задания, а не фабриковать no_violation.",
+    "unknown_event": "Только внутренняя нейтральная карточка, без придуманной нормы.",
+    "deduplication": "R14 не дублирует R02 как нарушение; разные основания одного эпизода связать внутренним episode_id. R03 и R25 взаимоисключаются по направлению операции; R04 и R26 — по виду приёма."
+  },
+  "privacy": {
+    "cloud_ai": false,
+    "face_identification": false,
+    "anonymous_tracks_only": true,
+    "video_frames_descriptions_predictions_remain_local": true
+  },
+  "reference_module": "explain_local.py; формирует внутреннее решение и шаблон, не изменяет API и не читает видео. evidence_check обязан проверить реальные локальные доказательства."
+}

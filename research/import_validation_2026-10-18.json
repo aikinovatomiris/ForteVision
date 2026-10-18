@@ -1,0 +1,189 @@
+{
+  "checked_on": "2026-10-18",
+  "scope": "Documentation import validation; not legal re-verification, ML accuracy testing or application integration.",
+  "source_archive": "forte_legal_extended_2026-10-18.zip",
+  "source_archive_sha256": "f970af1d47a8938f7fb4c6e86b1ace5cde40d8d83cb4a000b5a2b7365bfce526",
+  "base_commit": "2c69c800c8b4be148eed5064fd878f3d7cbc2796",
+  "checks": [
+    {
+      "check": "strict_json_no_duplicate_keys_or_nonfinite_numbers",
+      "passed": true,
+      "detail": 8
+    },
+    {
+      "check": "unique_rule_ids_and_event_types",
+      "passed": true
+    },
+    {
+      "check": "complete_rule_sequence",
+      "passed": true
+    },
+    {
+      "check": "unique_source_and_clause_ids",
+      "passed": true
+    },
+    {
+      "check": "cross_references",
+      "passed": true
+    },
+    {
+      "check": "ui_and_ml_rule_coverage",
+      "passed": true
+    },
+    {
+      "check": "no_detection_enabled",
+      "passed": true
+    },
+    {
+      "check": "required_rule_and_ui_fields",
+      "passed": true
+    },
+    {
+      "check": "binding_hashes",
+      "passed": true
+    },
+    {
+      "check": "quotation_hashes",
+      "passed": true
+    },
+    {
+      "check": "predicate_contracts",
+      "passed": true
+    },
+    {
+      "check": "additional_candidate_references",
+      "passed": true
+    },
+    {
+      "check": "source_artifacts_present_and_hashes_match",
+      "passed": true,
+      "detail": 5
+    },
+    {
+      "check": "all_clause_snapshot_paths_exist",
+      "passed": true,
+      "detail": [
+        "sources/14_official_snapshot_2026-10-17.txt",
+        "sources/231_official_snapshot_2026-10-17.txt"
+      ]
+    },
+    {
+      "check": "fresh_check_log_exists",
+      "passed": true
+    },
+    {
+      "check": "imported_files_byte_identical_to_archive",
+      "passed": true,
+      "detail": 12
+    },
+    {
+      "check": "archive_legacy_id_event_type_and_field_compatibility",
+      "passed": true
+    },
+    {
+      "check": "markdown_local_link:research/legal_research_extended.md:coverage_matrix.md",
+      "passed": true
+    },
+    {
+      "check": "markdown_local_link:docs/EXTENDED_LEGAL_RESEARCH.md:../research/rules_extended.json",
+      "passed": true
+    },
+    {
+      "check": "markdown_local_link:docs/EXTENDED_LEGAL_RESEARCH.md:../research/legal_sources.json",
+      "passed": true
+    },
+    {
+      "check": "markdown_local_link:docs/EXTENDED_LEGAL_RESEARCH.md:../research/ml_rule_mapping.json",
+      "passed": true
+    },
+    {
+      "check": "markdown_local_link:docs/EXTENDED_LEGAL_RESEARCH.md:../research/ui_explanations.json",
+      "passed": true
+    },
+    {
+      "check": "markdown_local_link:docs/EXTENDED_LEGAL_RESEARCH.md:../research/legal_research_extended.md",
+      "passed": true
+    },
+    {
+      "check": "markdown_local_link:docs/EXTENDED_LEGAL_RESEARCH.md:../research/coverage_matrix.md",
+      "passed": true
+    },
+    {
+      "check": "markdown_local_link:docs/EXTENDED_LEGAL_RESEARCH.md:../research/research_changes.md",
+      "passed": true
+    },
+    {
+      "check": "markdown_local_link:docs/EXTENDED_LEGAL_RESEARCH.md:../research/sources/",
+      "passed": true
+    },
+    {
+      "check": "markdown_local_link:docs/EXTENDED_LEGAL_RESEARCH.md:../research/import_validation_2026-10-18.json",
+      "passed": true
+    },
+    {
+      "check": "markdown_local_link:docs/EXTENDED_LEGAL_RESEARCH.md:../research/sources/link_check_2026-10-18.json",
+      "passed": true
+    },
+    {
+      "check": "secrets_private_paths_and_embedded_media_scan",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "check": "publication_allowlist",
+      "passed": true
+    },
+    {
+      "check": "existing_tracked_files_unchanged",
+      "passed": true
+    },
+    {
+      "check": "all_publication_files_are_new",
+      "passed": true
+    }
+  ],
+  "passed": true,
+  "imported_file_count": 12,
+  "publication_files": [
+    "research/legal_research_extended.md",
+    "research/rules_extended.json",
+    "research/legal_sources.json",
+    "research/ml_rule_mapping.json",
+    "research/ui_explanations.json",
+    "research/coverage_matrix.md",
+    "research/research_changes.md",
+    "research/sources/14_official_snapshot_2026-10-17.txt",
+    "research/sources/231_official_snapshot_2026-10-17.txt",
+    "research/sources/amendment_audit_231_baseline.json",
+    "research/sources/browser_audit_2026-10-18.json",
+    "research/sources/retrieval_2026-10-18.json",
+    "docs/EXTENDED_LEGAL_RESEARCH.md",
+    "research/sources/link_check_2026-10-18.json",
+    "research/import_validation_2026-10-18.json"
+  ],
+  "imported_file_sha256": {
+    "research/legal_research_extended.md": "bd094024c848a66ad9ca35b54217d93d46fcb9c8aff2db2d8427c878ccc1e90e",
+    "research/rules_extended.json": "84b2c4c9d39781dad04ce0d7c0a795793986efd9e9818e825c3d55c9dd5495fa",
+    "research/legal_sources.json": "18db4097fde596866b30c995d9c0e18563390776b635520a9b203c0cfed74967",
+    "research/ml_rule_mapping.json": "333da96574d7a7ae560dd6010e0f5e953a9dc8853ebaed058245bcd4206ec879",
+    "research/ui_explanations.json": "da3f7a09d764ab48da7524b6860f6bc2559a19cb1d06630a961b97f65498e3ac",
+    "research/coverage_matrix.md": "8cde2a91dc846b4c5c9f468efd0ff4945312addc87a8cfdd31c706973ecd917a",
+    "research/research_changes.md": "137cbcefe06f1e2f2f6693f1b80dd19e2c51bd505cac980b27b04da797f54c42",
+    "research/sources/14_official_snapshot_2026-10-17.txt": "bc4109d0ac5082a48d561ae739093ae800df5b8ede2fe68071c66dcce956407c",
+    "research/sources/231_official_snapshot_2026-10-17.txt": "1e990be5860ffdd67a86b190bb87e27384ef8623908209914565439efc588b23",
+    "research/sources/amendment_audit_231_baseline.json": "b9996cebee1b6e84015d270cf6635b07a030e176dc08125228a705cc95058f38",
+    "research/sources/browser_audit_2026-10-18.json": "6acad5fa40a62430510ec0fc98ab05d0ad55dfc5eb7adb591a46e15a39a80a3f",
+    "research/sources/retrieval_2026-10-18.json": "e6ae53d803e0989bddf3fe62c7b6fec3b0e7d32d137a2b17f1742a456a4e8621"
+  },
+  "limitations": [
+    "External HTTP outcomes, including timeouts and JavaScript shells, are recorded separately in sources/link_check_2026-10-18.json.",
+    "Historical provenance paths and reference_module describe the source archive, not installed repository modules; see docs/EXTENDED_LEGAL_RESEARCH.md.",
+    "Archive scripts and synthetic protocol tests were not executed."
+  ],
+  "external_link_summary": {
+    "reachable_javascript_shell_content_not_verified": 14,
+    "not_verified": 18,
+    "reachable_content_not_legally_reviewed": 1,
+    "reachable_pdf_content_not_reviewed": 1
+  }
+}
